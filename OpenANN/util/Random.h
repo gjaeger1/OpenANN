@@ -9,6 +9,7 @@
 #include <OpenANN/util/AssertionMacros.h>
 #include <cmath>
 #include <cstdlib>
+#include <random>
 #include <algorithm>
 
 namespace OpenANN
@@ -110,7 +111,9 @@ public:
 #if __cplusplus < 201300L		
     std::random_shuffle(result.begin(), result.end());
 #else
-    std::shuffle(result.begin(), result.end());
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(result.begin(), result.end(), g);
 #endif
   }
 
