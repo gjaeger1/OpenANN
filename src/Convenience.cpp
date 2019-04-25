@@ -2,6 +2,7 @@
 #include <OpenANN/util/OpenANNException.h>
 #include <OpenANN/optimization/Optimizer.h>
 #include <OpenANN/optimization/MBSGD.h>
+#include <OpenANN/optimization/AdamSGD.h>
 #include <OpenANN/optimization/LMA.h>
 #include <OpenANN/optimization/CG.h>
 #include <OpenANN/optimization/LBFGS.h>
@@ -23,6 +24,8 @@ void train(Net& net, std::string algorithm, ErrorFunction errorFunction,
   Optimizer* opt;
   if(algorithm == "MBSGD")
     opt = new MBSGD;
+  else if(algorithm == "AdamSGD")
+    opt = new AdamSGD;
   else if(algorithm == "LMA")
     opt = new LMA;
   else if(algorithm == "CG")
