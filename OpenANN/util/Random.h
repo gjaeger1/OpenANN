@@ -111,9 +111,13 @@ public:
 #if __cplusplus < 201300L		
     std::random_shuffle(result.begin(), result.end());
 #else
-    std::random_device rd;
-    std::mt19937 g(rd());
-    std::shuffle(result.begin(), result.end(), g);
+    #if __cplusplus < 201402L
+      std::shuffle(result.begin(), result.end());
+    #else
+      std::random_device rd;
+      std::mt19937 g(rd());
+      std::shuffle(result.begin(), result.end(), g);
+    #endif
 #endif
   }
 

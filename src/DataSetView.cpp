@@ -53,9 +53,13 @@ DataSetView& DataSetView::shuffle()
 #if __cplusplus < 201300L		
   std::random_shuffle(indices.begin(), indices.end());
 #else
-  std::random_device rd;
-  std::mt19937 g(rd());
-  std::shuffle(indices.begin(), indices.end(), g);
+  #if __cplusplus < 201402L
+    std::shuffle(indices.begin(), indices.end());
+  #else
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(indices.begin(), indices.end(), g);
+  #endif
 #endif
   return *this;
 }
@@ -79,9 +83,13 @@ void split(std::vector<DataSetView>& groups, DataSet& dataset,
 		#if __cplusplus < 201300L		
 			std::random_shuffle(indices.begin(), indices.end());
 		#else
-		    std::random_device rd;
-            std::mt19937 g(rd());
-            std::shuffle(indices.begin(), indices.end(), g);
+		    #if __cplusplus < 201402L
+              std::shuffle(indices.begin(), indices.end());
+            #else
+              std::random_device rd;
+              std::mt19937 g(rd());
+              std::shuffle(indices.begin(), indices.end(), g);
+            #endif
 		#endif
 	}
   for(int i = 0; i < numberOfGroups; ++i)
@@ -114,9 +122,13 @@ void split(std::vector<DataSetView>& groups, DataSet& dataset, double ratio,
 		#if __cplusplus < 201300L		
 			std::random_shuffle(indices.begin(), indices.end());
 		#else
-		    std::random_device rd;
-            std::mt19937 g(rd());
-            std::shuffle(indices.begin(), indices.end(), g);
+		    #if __cplusplus < 201402L
+              std::shuffle(indices.begin(), indices.end());
+            #else
+              std::random_device rd;
+              std::mt19937 g(rd());
+              std::shuffle(indices.begin(), indices.end(), g);
+            #endif
 		#endif	
 	}
   groups.push_back(DataSetView(dataset, indices.begin(), indices.begin() + samples));
