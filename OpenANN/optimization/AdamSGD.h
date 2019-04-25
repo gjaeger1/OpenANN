@@ -47,7 +47,7 @@ class AdamSGD : public Optimizer
   double accumulatedError;
   std::vector<int> randomIndices;
 
-  static constexpr double epsilonAdam = 0.000000010;
+  const double epsilonAdam = 0.000000010;
 public:
   /**
    * Create mini-batch stochastic gradient descent optimizer.

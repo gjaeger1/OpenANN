@@ -32,6 +32,7 @@
 #include "IntrinsicPlasticityTestCase.h"
 #include "RBMTestCase.h"
 #include "MBSGDTestCase.h"
+#include "AdamSGDTestCase.h"
 #include "LMATestCase.h"
 #include "CGTestCase.h"
 #include "LBFGSTestCase.h"
@@ -90,6 +91,7 @@ int main(int argc, char** argv)
 
   ts.addTestCase(new CMAESTestCase);
   ts.addTestCase(new MBSGDTestCase);
+  ts.addTestCase(new AdamSGDTestCase);
   ts.addTestCase(new LMATestCase);
   ts.addTestCase(new CGTestCase);
   ts.addTestCase(new LBFGSTestcase);
