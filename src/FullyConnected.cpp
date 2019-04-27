@@ -87,19 +87,19 @@ void FullyConnected::backpropagate(Eigen::MatrixXd* ein,
   const int N = a.rows();
   yd.conservativeResize(N, Eigen::NoChange);
   // Derive activations
-  activationFunctionDerivative(act, y, yd);
+  activationFunctionDerivative(act, y, yd); // derivation of activation function to its inputs
   deltas = yd.cwiseProduct(*ein);
   // Weight derivatives
-  Wd = deltas.transpose() * *x;
+  Wd = deltas.transpose() * *x; // delta * derivation of input-function (weighted sum) to weights
   if(bias)
-    bd = deltas.colwise().sum().transpose();
+    bd = deltas.colwise().sum().transpose(); //TODO: should we devide by number of rows in x here? -> number of samples // delta * derivation of input-function (weighted sum) to weights
   if(regularization.l1Penalty > 0.0)
     Wd.array() += regularization.l1Penalty * W.array() / W.array().abs();
   if(regularization.l2Penalty > 0.0)
     Wd += regularization.l2Penalty * W;
   // Prepare error signals for previous layer
   if(backpropToPrevious)
-    e = deltas * W;
+    e = deltas * W; // deltas * derivation of the input function to its inputs
   eout = &e;
 }
 

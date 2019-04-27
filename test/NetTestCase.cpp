@@ -155,6 +155,7 @@ void NetTestCase::multilayerNetwork()
   net.localReponseNormalizationLayer(2.0, 3, 0.01, 0.75);
   net.subsamplingLayer(2, 2, OpenANN::TANH, 0.5);
   net.fullyConnectedLayer(10, OpenANN::TANH, 0.5);
+  net.rbfLayer(10, 0.5);
   net.extremeLayer(10, OpenANN::TANH, 0.05);
   net.outputLayer(3, OpenANN::LINEAR, 0.5);
   net.trainingSet(ds);

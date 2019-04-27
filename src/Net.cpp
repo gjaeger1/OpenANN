@@ -2,6 +2,7 @@
 #include <OpenANN/layers/Input.h>
 #include <OpenANN/layers/AlphaBetaFilter.h>
 #include <OpenANN/layers/FullyConnected.h>
+#include <OpenANN/layers/RBF.h>
 #include <OpenANN/layers/Compressed.h>
 #include <OpenANN/layers/Extreme.h>
 #include <OpenANN/layers/Convolutional.h>
@@ -57,6 +58,12 @@ Net& Net::fullyConnectedLayer(int units, ActivationFunction act, double stdDev,
       << stdDev << " " << bias << " ";
   return addLayer(new FullyConnected(infos.back(), units, bias, act, stdDev,
                                      regularization));
+}
+
+Net& Net::rbfLayer(int units, double stdDev)
+{
+  architecture << "rbf " << units << " "  << stdDev << " ";
+  return addLayer(new RBF(infos.back(), units, stdDev, regularization));
 }
 
 Net& Net::restrictedBoltzmannMachineLayer(int H, int cdN, double stdDev,
@@ -591,7 +598,7 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
 
   value = 0;
   forwardPropagate(&value);
-  tempError = tempOutput - T;
+  tempError = tempOutput - T;  //TODO: Does this mean that we always use the quadratic error? We should see here the derivation of the cost function to the output of the individual neurons
   value += errorFunction == CE ? crossEntropy(tempOutput, T) :
       meanSquaredError(tempError);
   backpropagate();

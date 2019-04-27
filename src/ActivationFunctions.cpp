@@ -103,7 +103,6 @@ void normaltanhDerivative(const Eigen::MatrixXd& z, Eigen::MatrixXd& gd)
   for(double* gdPtr = gd.data(); zPtr < zEnd; zPtr++, gdPtr++)
     *gdPtr = 1.0 - *zPtr * *zPtr;
 }
-
 void scaledtanh(const Eigen::MatrixXd& a, Eigen::MatrixXd& z)
 {
   double const* aPtr = a.data();

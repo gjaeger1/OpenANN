@@ -17,6 +17,7 @@
 #include "KMeansTestCase.h"
 #include "RandomTestCase.h"
 #include "FullyConnectedTestCase.h"
+#include "RBFTestCase.h"
 #include "CompressedTestCase.h"
 #include "ConvolutionalTestCase.h"
 #include "SubsamplingTestCase.h"
@@ -74,6 +75,7 @@ int main(int argc, char** argv)
   ts.addTestCase(new KMeansTestCase);
 
   ts.addTestCase(new FullyConnectedTestCase);
+  ts.addTestCase(new RBFTestCase);
   ts.addTestCase(new CompressedTestCase);
   ts.addTestCase(new ConvolutionalTestCase);
   ts.addTestCase(new SubsamplingTestCase);

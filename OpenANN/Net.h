@@ -89,6 +89,13 @@ public:
   Net& fullyConnectedLayer(int units, ActivationFunction act,
                            double stdDev = 0.05, bool bias = true);
   /**
+   * Add an rbf hidden layer.
+   * @param units number of nodes (neurons)
+   * @param stdDev standard deviation of the Gaussian distributed initial weights
+   * @return this for chaining
+   */
+  Net& rbfLayer(int units, double stdDev = 0.05);
+  /**
    * Add a layer that contains an RBM.
    * @param H number of nodes (neurons)
    * @param cdN number of gibbs sampling steps for pretraining
