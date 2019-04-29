@@ -280,6 +280,14 @@ void Net::load(std::istream& stream)
           << stdDev << " " << bias;
       fullyConnectedLayer(units, (ActivationFunction) act, stdDev, bias);
     }
+    else if(type == "rbf")
+    {
+      int units;
+      double stdDev;
+      stream >> units >> stdDev;
+      OPENANN_DEBUG << "rbf " << units << " " << stdDev;
+      rbfLayer(units, stdDev);
+    }
     else if(type == "rbm")
     {
       int H;

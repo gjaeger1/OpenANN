@@ -4,6 +4,7 @@
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/util/Random.h>
 #include <sstream>
+#include <iomanip>
 
 void NetTestCase::run()
 {
@@ -261,10 +262,12 @@ void NetTestCase::saveLoad()
   .subsamplingLayer(2, 2, OpenANN::TANH)
   .extremeLayer(5, OpenANN::TANH, 1.0)
   .fullyConnectedLayer(10, OpenANN::TANH)
+  .rbfLayer(10, 0.5)
   .sparseAutoEncoderLayer(5, 3.0, 0.1, OpenANN::LOGISTIC)
   .compressedOutputLayer(2, 2, OpenANN::SOFTMAX, "gaussian");
   net.setErrorFunction(OpenANN::CE);
   std::stringstream stream;
+  stream <<std::setprecision(20);
   net.save(stream);
   OpenANN::RandomNumberGenerator().seed(0);
   OpenANN::Net loadedNet;
@@ -276,5 +279,5 @@ void NetTestCase::saveLoad()
   Eigen::MatrixXd Y2 = loadedNet(X);
   for(int n = 0; n < Y1.rows(); n++)
     for(int f = 0; f < Y2.cols(); f++)
-      ASSERT_EQUALS_DELTA(Y1(n, f), Y2(n, f), 1e-5);
+      ASSERT_EQUALS_DELTA(Y1(n, f), Y2(n, f), 1e-10);
 }

@@ -38,7 +38,7 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   message(FATAL_ERROR "Usage: mkdir build; cmake ..")
 endif()
 
-set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_BUILD_TYPE "Release")
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
@@ -105,7 +105,7 @@ add_subdirectory(lib)
 
 include_directories(. ${EIGEN3_INCLUDE_DIRS} lib/CMA-ESpp lib/ALGLIB test/lib/CPP-Test)
 add_subdirectory(src)
-option(EXCLUDE_TESTS_FROM_ALL "Exclude examples, benchmarks and test suite from standard target." ON)
+option(EXCLUDE_TESTS_FROM_ALL "Exclude examples, benchmarks and test suite from standard target." OFF)
 if(EXCLUDE_TESTS_FROM_ALL)
   add_subdirectory(examples EXCLUDE_FROM_ALL)
   add_subdirectory(benchmarks EXCLUDE_FROM_ALL)
