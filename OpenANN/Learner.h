@@ -22,9 +22,35 @@ protected:
   DataSet* validSet;
   bool deleteTrainSet, deleteValidSet;
   int N;
+
+  /**
+   * @brief Frees the memory occupied by training and validating data sets if there are any and we are allowed to free them.
+   */
+  void clearDatasets();
 public:
   Learner();
   virtual ~Learner();
+
+  /**
+   * @brief Copy Constructor
+   */
+  Learner(const Learner& other);
+
+  /**
+   * @brief Move Constructor
+   */
+  Learner(Learner&& other);
+
+  /**
+   * @brief Copy Assignment Operator
+   */
+  Learner& operator = (const Learner& other);
+
+  /**
+   * @brief Move Assignment Operator
+   */
+  Learner& operator = (Learner&& other);
+
   /**
    * Make a prediction.
    * @param x Input vector.

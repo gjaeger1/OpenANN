@@ -57,6 +57,27 @@ public:
   virtual ~Net();
 
   /**
+   * @brief Copy Constructor
+   */
+  Net(const Net& other);
+
+  /**
+   * @brief Move Contstructor
+   */
+  Net(Net&& other);
+
+  /**
+   * @brief Copy Assignment Operator
+   */
+  Net& operator=(const Net& other);
+
+  /**
+   * @brief Copy Move Operator
+   */
+  Net& operator=(Net&& other);
+
+
+  /**
    * @name Architecture Definition
    * These functions must be called to define the architecture of the network.
    */
@@ -285,12 +306,12 @@ public:
    * Save network.
    * @param fileName name of the file
    */
-  void save(const std::string& fileName);
+  void save(const std::string& fileName) const;
   /**
    * Save network.
    * @param stream output stream
    */
-  void save(std::ostream& stream);
+  void save(std::ostream& stream) const;
   /**
    * Load network from file.
    * @param fileName name of the file
@@ -347,6 +368,7 @@ net2.load("mlnn.net");
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
   virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X);
   virtual unsigned int dimension();
+  virtual const Eigen::VectorXd& currentParameters() const;
   virtual const Eigen::VectorXd& currentParameters();
   virtual void setParameters(const Eigen::VectorXd& parameters);
   virtual bool providesInitialization();
@@ -369,6 +391,8 @@ protected:
   void initializeNetwork();
   void forwardPropagate(double* error);
   void backpropagate();
+
+  void clearLayers();
 };
 
 } // namespace OpenANN

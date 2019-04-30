@@ -18,6 +18,8 @@
 #include <OpenANN/util/OpenANNException.h>
 #include <OpenANN/util/AssertionMacros.h>
 #include <fstream>
+#include <iomanip>
+#include <sstream>
 
 namespace OpenANN
 {
@@ -31,12 +33,137 @@ Net::Net()
 
 Net::~Net()
 {
+  this->clearLayers();
+}
+
+void Net::clearLayers()
+{
   for(int i = 0; i < layers.size(); i++)
   {
     delete layers[i];
     layers[i] = 0;
   }
   layers.clear();
+}
+
+/**
+* @brief Copy Constructor
+*/
+Net::Net(const Net& other) : Learner(other)
+{
+    std::cout << "Using Copy Constructor\n";
+    if(this == &other)
+        return;
+
+    this->infos = other.infos;
+    this->regularization = other.regularization;
+    this->errorFunction = other.errorFunction;
+    this->dropout = other.dropout;
+    this->initialized = other.initialized;
+    this->P = other.P;
+    this->L = 0; // will be set when loading from string stream
+    this->parameterVector = other.parameterVector;
+    this->tempGradient = other.tempGradient;
+    this->tempInput = other.tempInput;
+    this->tempOutput = other.tempOutput;
+    this->tempError = other.tempError;
+
+
+    // copy layers by load/saving them to stringstream
+    std::stringstream ss;
+    ss << std::setprecision(20);
+    other.save(ss);
+    this->load(ss);
+}
+
+/**
+* @brief Move Contstructor
+*/
+Net::Net(Net&& other)  : Learner(other)
+{
+    std::cout << "Using Move Constructor\n";
+    this->clearLayers();
+
+    std::swap(this->infos,other.infos);
+    std::swap(this->regularization,other.regularization);
+    std::swap(this->errorFunction , other.errorFunction);
+    std::swap(this->dropout , other.dropout);
+    std::swap(this->initialized , other.initialized);
+    std::swap(this->P, other.P);
+    std::swap(this->L, other.L);
+    std::swap(this->parameterVector, other.parameterVector);
+    std::swap(this->tempGradient, other.tempGradient);
+    std::swap(this->tempInput, other.tempInput);
+    std::swap(this->tempOutput, other.tempOutput);
+    std::swap(this->tempError ,other.tempError);
+
+    this->layers = std::move(other.layers);
+    this->parameters = std::move(other.parameters);
+    this->derivatives = std::move(other.derivatives);
+}
+
+/**
+* @brief Copy Assignment Operator
+*/
+Net& Net::operator=(const Net& other)
+{
+    std::cout << "Using Copy Assignment Operator\n";
+    if(this == &other)
+        return *this;
+
+    Learner::operator =(other);
+
+    this->infos = other.infos;
+    this->regularization = other.regularization;
+    this->errorFunction = other.errorFunction;
+    this->dropout = other.dropout;
+    this->initialized = other.initialized;
+    this->P = other.P;
+    this->L = 0; // will be set when loading from string stream
+    this->parameterVector = other.parameterVector;
+    this->tempGradient = other.tempGradient;
+    this->tempInput = other.tempInput;
+    this->tempOutput = other.tempOutput;
+    this->tempError = other.tempError;
+
+
+    // copy layers by load/saving them to stringstream
+    std::stringstream ss;
+    ss << std::setprecision(20);
+    other.save(ss);
+    this->load(ss);
+
+    return *this;
+}
+
+/**
+* @brief Move Assignment Operator
+*/
+Net& Net::operator=(Net&& other)
+{
+    std::cout << "Using Move Assignment Operator\n";
+    this->clearLayers();
+
+    Learner::operator =(other);
+
+    std::swap(this->infos,other.infos);
+    std::swap(this->regularization,other.regularization);
+    std::swap(this->errorFunction , other.errorFunction);
+    std::swap(this->dropout , other.dropout);
+    std::swap(this->initialized , other.initialized);
+    std::swap(this->P, other.P);
+    std::swap(this->L, other.L);
+    std::swap(this->parameterVector, other.parameterVector);
+    std::swap(this->tempGradient, other.tempGradient);
+    std::swap(this->tempInput, other.tempInput);
+    std::swap(this->tempOutput, other.tempOutput);
+    std::swap(this->tempError ,other.tempError);
+
+    this->layers = std::move(other.layers);
+    this->parameters = std::move(other.parameters);
+    this->derivatives = std::move(other.derivatives);
+
+    return *this;
 }
 
 Net& Net::inputLayer(int dim1, int dim2, int dim3)
@@ -226,7 +353,7 @@ DataSet* Net::propagateDataSet(DataSet& dataSet, int l)
   return transformedDataSet;
 }
 
-void Net::save(const std::string& fileName)
+void Net::save(const std::string& fileName)  const
 {
   std::ofstream file(fileName.c_str());
   if(!file.is_open())
@@ -235,7 +362,7 @@ void Net::save(const std::string& fileName)
   file.close();
 }
 
-void Net::save(std::ostream& stream)
+void Net::save(std::ostream& stream)  const
 {
   stream << architecture.str() << "parameters " << currentParameters();
 }
@@ -497,6 +624,11 @@ unsigned int Net::dimension()
 unsigned int Net::examples()
 {
   return N;
+}
+
+const Eigen::VectorXd& Net::currentParameters() const
+{
+  return parameterVector;
 }
 
 const Eigen::VectorXd& Net::currentParameters()

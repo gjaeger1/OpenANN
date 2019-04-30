@@ -9,6 +9,12 @@ RBF::RBF(OutputInfo info, int J, double stdDev, Regularization regularization)
     W(J, I), Wd(J, I), b(J), bd(J), x(0),dist(1,J), a(1, J), y(1, J), yd(1, J),
     deltas(1, J), e(1, I), regularization(regularization)
 {
+    e.setZero();
+    Wd.setZero();
+    bd.setZero();
+    dist.setZero();
+    yd.setZero();
+    deltas.setZero();
 }
 
 OutputInfo RBF::initialize(std::vector<double*>& parameterPointers,
@@ -89,7 +95,6 @@ void RBF::backpropagate(Eigen::MatrixXd* ein,
 {
   const int N = a.rows();
   yd.conservativeResize(N, Eigen::NoChange);
-  e.resize(N, Eigen::NoChange);
 
   // Derive activations
   this->gaussianActivationFunctionDerivative(y, yd);
@@ -137,6 +142,8 @@ Eigen::VectorXd RBF::getParameters()
 void RBF::backpropDeltaFirstPart(const Eigen::MatrixXd& in, const Eigen::MatrixXd& deltas,  Eigen::MatrixXd& ndeltas) const
 {
   // loop over samples
+  ndeltas.resize(in.rows(), Eigen::NoChange);
+  ndeltas.setZero();
   for(std::size_t n = 0; n < in.rows(); n++)
   {
     // a single delta

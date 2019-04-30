@@ -12,10 +12,73 @@ Learner::Learner()
 
 Learner::~Learner()
 {
+  this->clearDatasets();
+}
+
+void Learner::clearDatasets()
+{
   if(deleteTrainSet && trainSet)
     delete trainSet;
   if(deleteValidSet && validSet)
     delete validSet;
+}
+
+/**
+* @brief Copy Constructor
+*/
+Learner::Learner(const Learner& other)
+{
+    this->trainSet = other.trainSet;
+    this->validSet = other.validSet;
+    this->N = other.N;
+
+    this->deleteTrainSet = false;
+    this->deleteValidSet = false;
+}
+
+/**
+* @brief Move Constructor
+*/
+Learner::Learner(Learner&& other)
+{
+    this->clearDatasets();
+
+    std::swap(this->trainSet, other.trainSet);
+    std::swap(this->validSet, other.validSet);
+    std::swap(this->N,other.N);
+    std::swap(this->deleteTrainSet, other.deleteTrainSet);
+    std::swap(this->deleteValidSet, other.deleteValidSet);
+}
+
+/**
+* @brief Copy Assignment Operator
+*/
+Learner& Learner::operator = (const Learner& other)
+{
+    this->trainSet = other.trainSet;
+    this->validSet = other.validSet;
+    this->N = other.N;
+
+    this->deleteTrainSet = false;
+    this->deleteValidSet = false;
+
+    return *this;
+}
+
+/**
+* @brief Move Assignment Operator
+*/
+Learner& Learner::operator = (Learner&& other)
+{
+    this->clearDatasets();
+
+    std::swap(this->trainSet, other.trainSet);
+    std::swap(this->validSet, other.validSet);
+    std::swap(this->N,other.N);
+    std::swap(this->deleteTrainSet, other.deleteTrainSet);
+    std::swap(this->deleteValidSet, other.deleteValidSet);
+
+    return *this;
 }
 
 Learner& Learner::trainingSet(Eigen::MatrixXd& input,

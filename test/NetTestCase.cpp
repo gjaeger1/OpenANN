@@ -5,6 +5,7 @@
 #include <OpenANN/util/Random.h>
 #include <sstream>
 #include <iomanip>
+#include <memory>
 
 void NetTestCase::run()
 {
@@ -17,6 +18,7 @@ void NetTestCase::run()
   RUN(NetTestCase, minibatchErrorGradient);
   RUN(NetTestCase, regularizationGradient);
   RUN(NetTestCase, saveLoad);
+  RUN(NetTestCase, copyMove);
 }
 
 void NetTestCase::dimension()
@@ -277,6 +279,84 @@ void NetTestCase::saveLoad()
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 2*6*6);
   Eigen::MatrixXd Y1 = net(X);
   Eigen::MatrixXd Y2 = loadedNet(X);
+  for(int n = 0; n < Y1.rows(); n++)
+    for(int f = 0; f < Y2.cols(); f++)
+      ASSERT_EQUALS_DELTA(Y1(n, f), Y2(n, f), 1e-10);
+}
+
+void NetTestCase::copyMove()
+{
+  OpenANN::RandomNumberGenerator().seed(0);
+  OpenANN::Net net;
+  net.setRegularization(0.001, 0.001, 0.0);
+  net.inputLayer(2, 6, 6)
+  .convolutionalLayer(2, 3, 3, OpenANN::TANH)
+  .subsamplingLayer(2, 2, OpenANN::TANH)
+  .extremeLayer(5, OpenANN::TANH, 1.0)
+  .fullyConnectedLayer(10, OpenANN::TANH)
+  .rbfLayer(10, 0.5)
+  .sparseAutoEncoderLayer(5, 3.0, 0.1, OpenANN::LOGISTIC)
+  .compressedOutputLayer(2, 2, OpenANN::SOFTMAX, "gaussian");
+  net.setErrorFunction(OpenANN::CE);
+
+
+  // copy constructor
+  OpenANN::RandomNumberGenerator().seed(0);
+  OpenANN::Net copiedConNet(net);
+  ASSERT_EQUALS(net.numberOflayers(), copiedConNet.numberOflayers());
+  ASSERT_EQUALS(net.dimension(), copiedConNet.dimension());
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 2*6*6);
+  Eigen::MatrixXd Y1 = net(X);
+  Eigen::MatrixXd Y2 = copiedConNet(X);
+  for(int n = 0; n < Y1.rows(); n++)
+    for(int f = 0; f < Y2.cols(); f++)
+      ASSERT_EQUALS_DELTA(Y1(n, f), Y2(n, f), 1e-10);
+
+  // copy assign
+  OpenANN::RandomNumberGenerator().seed(0);
+  OpenANN::Net copiedAsgnNet = net;
+  ASSERT_EQUALS(net.numberOflayers(), copiedAsgnNet.numberOflayers());
+  ASSERT_EQUALS(net.dimension(), copiedAsgnNet.dimension());
+  X = Eigen::MatrixXd::Random(2, 2*6*6);
+  Y1 = net(X);
+  Y2 = copiedAsgnNet(X);
+  for(int n = 0; n < Y1.rows(); n++)
+    for(int f = 0; f < Y2.cols(); f++)
+      ASSERT_EQUALS_DELTA(Y1(n, f), Y2(n, f), 1e-10);
+
+  // Move constructor
+  OpenANN::RandomNumberGenerator().seed(0);
+  OpenANN::Net netPtr(net);
+  ASSERT_EQUALS(net.numberOflayers(), netPtr.numberOflayers());
+  ASSERT_EQUALS(net.dimension(), netPtr.dimension());
+  X = Eigen::MatrixXd::Random(2, 2*6*6);
+  Y1 = net(X);
+  Y2 = netPtr(X);
+  for(int n = 0; n < Y1.rows(); n++)
+    for(int f = 0; f < Y2.cols(); f++)
+      ASSERT_EQUALS_DELTA(Y1(n, f), Y2(n, f), 1e-10);
+
+  OpenANN::Net netPtr2(std::move(netPtr));
+  ASSERT_EQUALS(net.numberOflayers(), netPtr2.numberOflayers());
+  ASSERT_EQUALS(net.dimension(), netPtr2.dimension());
+  ASSERT_EQUALS(0, netPtr.numberOflayers());
+  ASSERT_EQUALS(0, netPtr.dimension());
+  X = Eigen::MatrixXd::Random(2, 2*6*6);
+  Y1 = net(X);
+  Y2 = netPtr2(X);
+  for(int n = 0; n < Y1.rows(); n++)
+    for(int f = 0; f < Y2.cols(); f++)
+      ASSERT_EQUALS_DELTA(Y1(n, f), Y2(n, f), 1e-10);
+
+  OpenANN::Net netPtr3;
+  netPtr3 = std::move(netPtr2);
+  ASSERT_EQUALS(net.numberOflayers(), netPtr3.numberOflayers());
+  ASSERT_EQUALS(net.dimension(), netPtr3.dimension());
+  ASSERT_EQUALS(0, netPtr2.numberOflayers());
+  ASSERT_EQUALS(-1, netPtr2.dimension());
+  X = Eigen::MatrixXd::Random(2, 2*6*6);
+  Y1 = net(X);
+  Y2 = netPtr3(X);
   for(int n = 0; n < Y1.rows(); n++)
     for(int f = 0; f < Y2.cols(); f++)
       ASSERT_EQUALS_DELTA(Y1(n, f), Y2(n, f), 1e-10);
