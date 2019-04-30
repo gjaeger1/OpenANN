@@ -340,7 +340,7 @@ void NetTestCase::copyMove()
   ASSERT_EQUALS(net.numberOflayers(), netPtr2.numberOflayers());
   ASSERT_EQUALS(net.dimension(), netPtr2.dimension());
   ASSERT_EQUALS(0, netPtr.numberOflayers());
-  ASSERT_EQUALS(0, netPtr.dimension());
+  ASSERT_EQUALS(-1, netPtr.dimension());
   X = Eigen::MatrixXd::Random(2, 2*6*6);
   Y1 = net(X);
   Y2 = netPtr2(X);

@@ -79,7 +79,7 @@ Net::Net(const Net& other) : Learner(other)
 /**
 * @brief Move Contstructor
 */
-Net::Net(Net&& other)  : Learner(other)
+Net::Net(Net&& other)  : Learner(other), errorFunction(MSE), dropout(false), initialized(false), P(-1), L(0)
 {
     std::cout << "Using Move Constructor\n";
     this->clearLayers();
@@ -316,7 +316,7 @@ Net& Net::compressedOutputLayer(int units, int params, ActivationFunction act,
   return *this;
 }
 
-unsigned int Net::numberOflayers()
+unsigned int Net::numberOflayers() const
 {
   return L;
 }
@@ -327,7 +327,7 @@ Layer& Net::getLayer(unsigned int l)
   return *layers[l];
 }
 
-OutputInfo Net::getOutputInfo(unsigned int l)
+OutputInfo Net::getOutputInfo(unsigned int l) const
 {
   OPENANN_CHECK(l >= 0 && l < L);
   return infos[l];
@@ -617,6 +617,11 @@ Eigen::MatrixXd Net::operator()(const Eigen::MatrixXd& x)
 }
 
 unsigned int Net::dimension()
+{
+  return P;
+}
+
+unsigned int Net::dimension() const
 {
   return P;
 }

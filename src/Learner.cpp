@@ -39,7 +39,8 @@ Learner::Learner(const Learner& other)
 /**
 * @brief Move Constructor
 */
-Learner::Learner(Learner&& other)
+Learner::Learner(Learner&& other): trainSet(0), validSet(0), deleteTrainSet(false), deleteValidSet(false),
+    N(0)
 {
     this->clearDatasets();
 

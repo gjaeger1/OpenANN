@@ -6,7 +6,6 @@
 #include <OpenANN/Regularization.h>
 #include <OpenANN/layers/Layer.h>
 #include <vector>
-#include <sstream>
 
 namespace OpenANN
 {
@@ -276,7 +275,7 @@ public:
    * Request number of layers.
    * @return number of layers in this neural network
    */
-  unsigned int numberOflayers();
+  unsigned int numberOflayers() const;
   /**
    * Access layer.
    * @param l index of layer
@@ -288,7 +287,7 @@ public:
    * @param l index of the layer
    * @return output information
    */
-  OutputInfo getOutputInfo(unsigned int l);
+  OutputInfo getOutputInfo(unsigned int l) const;
   /**
    * Propagate data set through the first l layers.
    * @param dataSet original dataset
@@ -368,6 +367,7 @@ net2.load("mlnn.net");
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
   virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X);
   virtual unsigned int dimension();
+  virtual unsigned int dimension() const;
   virtual const Eigen::VectorXd& currentParameters() const;
   virtual const Eigen::VectorXd& currentParameters();
   virtual void setParameters(const Eigen::VectorXd& parameters);
