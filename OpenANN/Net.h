@@ -49,6 +49,7 @@ protected:
   std::stringstream architecture;
 
 public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   /**
    * Create feedforward neural network.
    */
@@ -366,6 +367,8 @@ net2.load("mlnn.net");
   ///@{
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
   virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X);
+  virtual std::vector<std::vector<double>> operator()(const std::vector<std::vector<double>>& x);
+  //virtual Eigen::ArrayXd operator()(const Eigen::ArrayXd& X);
   virtual unsigned int dimension();
   virtual unsigned int dimension() const;
   virtual const Eigen::VectorXd& currentParameters() const;

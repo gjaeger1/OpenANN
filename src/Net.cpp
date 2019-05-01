@@ -44,6 +44,9 @@ void Net::clearLayers()
     layers[i] = 0;
   }
   layers.clear();
+  infos.clear();
+  parameters.clear();
+  derivatives.clear();
 }
 
 /**
@@ -51,18 +54,15 @@ void Net::clearLayers()
 */
 Net::Net(const Net& other) : Learner(other)
 {
-    std::cout << "Using Copy Constructor\n";
+    //std::cout << "Using Copy Constructor\n";
     if(this == &other)
         return;
 
-    this->infos = other.infos;
     this->regularization = other.regularization;
     this->errorFunction = other.errorFunction;
     this->dropout = other.dropout;
-    this->initialized = other.initialized;
-    this->P = other.P;
     this->L = 0; // will be set when loading from string stream
-    this->parameterVector = other.parameterVector;
+    this->initialized = false;
     this->tempGradient = other.tempGradient;
     this->tempInput = other.tempInput;
     this->tempOutput = other.tempOutput;
@@ -81,8 +81,7 @@ Net::Net(const Net& other) : Learner(other)
 */
 Net::Net(Net&& other)  : Learner(other), errorFunction(MSE), dropout(false), initialized(false), P(-1), L(0)
 {
-    std::cout << "Using Move Constructor\n";
-    this->clearLayers();
+    //std::cout << "Using Move Constructor\n";
 
     std::swap(this->infos,other.infos);
     std::swap(this->regularization,other.regularization);
@@ -107,20 +106,19 @@ Net::Net(Net&& other)  : Learner(other), errorFunction(MSE), dropout(false), ini
 */
 Net& Net::operator=(const Net& other)
 {
-    std::cout << "Using Copy Assignment Operator\n";
+    //std::cout << "Using Copy Assignment Operator\n";
     if(this == &other)
         return *this;
 
     Learner::operator =(other);
 
-    this->infos = other.infos;
+    this->clearLayers();
+
     this->regularization = other.regularization;
     this->errorFunction = other.errorFunction;
     this->dropout = other.dropout;
-    this->initialized = other.initialized;
-    this->P = other.P;
+    this->initialized = false;
     this->L = 0; // will be set when loading from string stream
-    this->parameterVector = other.parameterVector;
     this->tempGradient = other.tempGradient;
     this->tempInput = other.tempInput;
     this->tempOutput = other.tempOutput;
@@ -141,7 +139,11 @@ Net& Net::operator=(const Net& other)
 */
 Net& Net::operator=(Net&& other)
 {
-    std::cout << "Using Move Assignment Operator\n";
+    //std::cout << "Using Move Assignment Operator\n";
+
+    if(this == &other)
+        return *this;
+
     this->clearLayers();
 
     Learner::operator =(other);
@@ -615,6 +617,37 @@ Eigen::MatrixXd Net::operator()(const Eigen::MatrixXd& x)
   forwardPropagate(0);
   return tempOutput;
 }
+
+std::vector<std::vector<double>> Net::operator()(const std::vector<std::vector<double>>& x)
+{
+    tempInput.resize(x.size(), Eigen::NoChange);
+    for(std::size_t r = 0; r < x.size(); r++)
+    {
+        for(std::size_t c = 0; c < x[r].size(); c++)
+        {
+            tempInput(r,c) = x[r][c];
+        }
+    }
+
+    forwardPropagate(0);
+    std::size_t dimOut = tempOutput.cols();
+    std::vector<std::vector<double>> res(x.size());
+    for(std::size_t r = 0; r < res.size(); r++)
+    {
+        res[r].reserve(dimOut);
+        for(std::size_t c = 0; c < (std::size_t)dimOut; c++)
+        {
+            res[r].push_back(tempOutput(r,c));
+        }
+    }
+    return res;
+}
+/*Eigen::ArrayXd Net::operator()(const Eigen::ArrayXd& x)
+{
+  tempInput = x.matrix();
+  forwardPropagate(0);
+  return tempOutput.array();
+}*/
 
 unsigned int Net::dimension()
 {

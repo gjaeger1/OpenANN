@@ -6,8 +6,8 @@
 namespace OpenANN
 {
 
-DirectStorageDataSet::DirectStorageDataSet(Eigen::MatrixXd* in,
-                                           Eigen::MatrixXd* out,
+DirectStorageDataSet::DirectStorageDataSet(const Eigen::MatrixXd* in,
+                                           const Eigen::MatrixXd* out,
                                            Evaluator* evaluator)
   : in(in), out(out), N(in->rows()), D(in->cols()),
     F(out ? out->cols() : 0), temporaryInput(in->cols()),

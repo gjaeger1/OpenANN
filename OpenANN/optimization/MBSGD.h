@@ -149,6 +149,7 @@ class MBSGD : public Optimizer
   double accumulatedError;
   std::vector<int> randomIndices;
 public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   /**
    * Create mini-batch stochastic gradient descent optimizer.
    *

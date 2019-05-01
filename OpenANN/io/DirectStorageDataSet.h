@@ -24,8 +24,8 @@ class Evaluator;
 class DirectStorageDataSet : public DataSet
 {
 protected:
-  Eigen::MatrixXd* in;
-  Eigen::MatrixXd* out;
+  const Eigen::MatrixXd* in;
+  const Eigen::MatrixXd* out;
   const int N;
   const int D;
   const int F;
@@ -34,13 +34,14 @@ protected:
   Evaluator* evaluator; //!< Do not delete the evaluator!
 
 public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   /**
    * Create an instance of DirectStorageDataSet.
    * @param in contains an instance in each row
    * @param out cointains a target in each row
    * @param evaluator monitors optimization progress
    */
-  DirectStorageDataSet(Eigen::MatrixXd* in, Eigen::MatrixXd* out = 0,
+  DirectStorageDataSet(const Eigen::MatrixXd* in, const Eigen::MatrixXd* out = 0,
                        Evaluator* evaluator = 0);
   virtual int samples() { return N; }
   virtual int inputs() { return D; }

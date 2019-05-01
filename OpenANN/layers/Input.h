@@ -18,6 +18,7 @@ class Input : public Layer
   Eigen::MatrixXd* x;
 
 public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   Input(int dim1, int dim2, int dim3);
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
                                 std::vector<double*>& parameterDerivativePointers);

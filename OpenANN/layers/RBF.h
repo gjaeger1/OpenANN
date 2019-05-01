@@ -79,6 +79,7 @@ protected:
   Regularization regularization;
 
 public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   RBF(OutputInfo info, int J, double stdDev, Regularization regularization);
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,
                                 std::vector<double*>& parameterDerivativePointers);
