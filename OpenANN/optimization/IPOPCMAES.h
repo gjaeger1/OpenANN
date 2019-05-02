@@ -4,7 +4,7 @@
 #include <OpenANN/io/Logger.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
 #include <OpenANN/optimization/Optimizer.h>
-#include <Eigen/Core>
+#include <OpenANN/util/EigenWrapper.h>
 
 template<typename T> class CMAES;
 template<typename T> class Parameters;

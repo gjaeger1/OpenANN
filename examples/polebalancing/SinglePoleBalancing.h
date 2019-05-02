@@ -2,7 +2,7 @@
 #define SINGLE_POLE_BALANCING_H_
 
 #include <OpenANN/rl/Environment.h>
-#include <Eigen/Core>
+#include <OpenANN/util/EigenWrapper.h>
 
 /**
  * @class SinglePoleBalancing

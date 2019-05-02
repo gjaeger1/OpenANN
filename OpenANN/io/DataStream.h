@@ -1,7 +1,7 @@
 #ifndef OPENANN_IO_DATA_STREAM_H_
 #define OPENANN_IO_DATA_STREAM_H_
 
-#include <Eigen/Core>
+#include <OpenANN/util/EigenWrapper.h>
 
 namespace OpenANN
 {

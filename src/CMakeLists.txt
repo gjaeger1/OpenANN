@@ -7,5 +7,16 @@ add_library(openann SHARED ${openann_src})
 if(OPENMP_FOUND)
   target_link_libraries(openann gomp)
 endif()
+
+if(LAPACK_FOUND)
+  add_compile_definitions(OPENANN_HAVE_LAPACK)
+  target_link_libraries(openann ${LAPACK_LIBRARIES})
+endif()
+
+if(BLAS_FOUND)
+  add_compile_definitions(OPENANN_HAVE_BLAS)
+  target_link_libraries(openann ${BLAS_LIBRARIES})
+endif()
+
 target_link_libraries(openann alglib)
 install(TARGETS openann DESTINATION lib)

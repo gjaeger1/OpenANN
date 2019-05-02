@@ -4,7 +4,7 @@
 #include <OpenANN/optimization/Optimizer.h>
 #include <OpenANN/optimization/StoppingCriteria.h>
 #include <OpenANN/util/Random.h>
-#include <Eigen/Core>
+#include <OpenANN/util/EigenWrapper.h>
 #include <vector>
 #include <list>
 

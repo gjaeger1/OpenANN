@@ -2,7 +2,7 @@
 #define DECIMATOR_H_
 
 #include <OpenANN/Preprocessing.h>
-#include <Eigen/Core>
+#include <OpenANN/util/EigenWrapper.h>
 #include <cmath>
 
 class Decimator

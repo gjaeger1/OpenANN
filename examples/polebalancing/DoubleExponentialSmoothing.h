@@ -1,7 +1,7 @@
 #ifndef DOUBLE_EXPONENTIAL_SMOOTHING_H_
 #define DOUBLE_EXPONENTIAL_SMOOTHING_H_
 
-#include <Eigen/Core>
+#include <OpenANN/util/EigenWrapper.h>
 #include <OpenANN/io/Logger.h>
 
 class DoubleExponentialSmoothing

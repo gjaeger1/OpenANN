@@ -7,7 +7,7 @@
  * Provides some convenience functions to evaluate learners.
  */
 
-#include <Eigen/Core>
+#include <OpenANN/util/EigenWrapper.h>
 
 namespace OpenANN
 {

@@ -2,7 +2,7 @@
 #define OPENANN_TEST_FINITE_DIFFERENCES_H_
 
 #include <OpenANN/Learner.h>
-#include <Eigen/Core>
+#include <OpenANN/util/EigenWrapper.h>
 #include <vector>
 
 namespace OpenANN

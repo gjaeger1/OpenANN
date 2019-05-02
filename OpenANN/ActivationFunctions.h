@@ -1,7 +1,7 @@
 #ifndef OPENANN_ACTIVATION_FUNCTIONS_H_
 #define OPENANN_ACTIVATION_FUNCTIONS_H_
 
-#include <Eigen/Core>
+#include <OpenANN/util/EigenWrapper.h>
 
 namespace OpenANN
 {

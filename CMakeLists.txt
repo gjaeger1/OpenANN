@@ -4,6 +4,9 @@ project(OpenANN)
 
 find_package(Doxygen)
 find_package(OpenMP)
+find_package(BLAS)
+find_package(LAPACK)
+
 include(CheckIncludeFiles)
 include(cmake/UseDoxygen.cmake)
 include(cmake/Utilities.cmake)

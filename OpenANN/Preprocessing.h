@@ -7,7 +7,7 @@
  * Provides some convenience functions to preprocess data.
  */
 
-#include <Eigen/Core>
+#include <OpenANN/util/EigenWrapper.h>
 
 namespace OpenANN
 {

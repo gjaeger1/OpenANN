@@ -3,7 +3,7 @@
 
 #include <OpenANN/OpenANN>
 #include <OpenANN/io/DirectStorageDataSet.h>
-#include <Eigen/Core>
+#include <OpenANN/util/EigenWrapper.h>
 #include <QGLWidget>
 #include <QKeyEvent>
 #include <QMutex>

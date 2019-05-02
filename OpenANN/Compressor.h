@@ -3,7 +3,7 @@
 
 #include <OpenANN/Transformer.h>
 #include <OpenANN/CompressionMatrixFactory.h>
-#include <Eigen/Core>
+#include <OpenANN/util/EigenWrapper.h>
 
 namespace OpenANN
 {

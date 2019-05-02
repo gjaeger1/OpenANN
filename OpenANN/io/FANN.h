@@ -1,7 +1,7 @@
 #ifndef OPENANN_IO_FANN_H_
 #define OPENANN_IO_FANN_H_
 
-#include <Eigen/Core>
+#include <OpenANN/util/EigenWrapper.h>
 #include <iostream>
 
 namespace OpenANN

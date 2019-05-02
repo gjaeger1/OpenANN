@@ -1,7 +1,7 @@
 #ifndef OPENANN_RL_ACTION_SPACE_H_
 #define OPENANN_RL_ACTION_SPACE_H_
 
-#include <Eigen/Core>
+#include <OpenANN/util/EigenWrapper.h>
 #include <vector>
 
 namespace OpenANN

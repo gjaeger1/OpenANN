@@ -2,7 +2,7 @@
 #define OPENANN_TEST_SIGMA_PI_CONSTRAINT_TEST_CASE_H_
 
 #include "Test/TestCase.h"
-#include <Eigen/Core>
+#include <OpenANN/util/EigenWrapper.h>
 
 class SigmaPiConstraintTestCase : public TestCase
 {

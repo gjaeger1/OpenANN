@@ -3,7 +3,7 @@
 
 #include <OpenANN/rl/ActionSpace.h>
 #include <OpenANN/rl/StateSpace.h>
-#include <Eigen/Core>
+#include <OpenANN/util/EigenWrapper.h>
 
 namespace OpenANN
 {

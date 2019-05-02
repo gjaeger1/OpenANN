@@ -2,7 +2,7 @@
 #define OPENANN_ZCA_WHITENING_H_
 
 #include <OpenANN/Transformer.h>
-#include <Eigen/Core>
+#include <OpenANN/util/EigenWrapper.h>
 
 namespace OpenANN
 {

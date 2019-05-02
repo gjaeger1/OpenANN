@@ -1,8 +1,13 @@
 #ifndef OPENANN_UTIL_EIGEN_WRAPPER_H_
 #define OPENANN_UTIL_EIGEN_WRAPPER_H_
 
+#ifdef OPENANN_HAVE_BLAS
 #define EIGEN_USE_BLAS
+#endif
+
+#ifdef OPENANN_HAVE_LAPACK
 #define EIGEN_USE_LAPACK
+#endif
 
 #include <OpenANN/util/AssertionMacros.h>
 #include <Eigen/Core>

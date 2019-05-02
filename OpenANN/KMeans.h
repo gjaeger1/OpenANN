@@ -3,7 +3,7 @@
 
 #include <OpenANN/util/Random.h>
 #include <OpenANN/Transformer.h>
-#include <Eigen/Core>
+#include <OpenANN/util/EigenWrapper.h>
 #include <vector>
 
 namespace OpenANN
