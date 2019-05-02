@@ -676,6 +676,7 @@ const Eigen::VectorXd& Net::currentParameters()
 
 void Net::setParameters(const Eigen::VectorXd& parameters)
 {
+  OPENANN_CHECK_INF_AND_NAN(parameters);
   parameterVector = parameters;
   for(int p = 0; p < P; p++)
     *(this->parameters[p]) = parameters(p);

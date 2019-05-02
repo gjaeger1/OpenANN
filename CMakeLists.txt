@@ -41,13 +41,16 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   message(FATAL_ERROR "Usage: mkdir build; cmake ..")
 endif()
 
+set(CMAKE_BUILD_TYPE "Release")
 
-if(NOT ${CMAKE_BUILD_TYPE} STREQUAL Release OR NOT ${CMAKE_BUILD_TYPE} STREQUAL Debug)
-  set(CMAKE_BUILD_TYPE "Release")
+option(DEBUG_CONFIG "Set to 'ON' for debugging" OFF)
+
+if(DEBUG_CONFIG)
+ set(CMAKE_BUILD_TYPE "Debug")
 endif()
 
-set(LOG_LEVEL "INFO" CACHE String "Log level (DEBUG, INFO, ERROR, DISABLED).")
-set(PARALLEL_CORES 4 CACHE Integer "Number of cores that can be used in parallel.")
+set(LOG_LEVEL "INFO" CACHE STRING "Log level (DEBUG, INFO, ERROR, DISABLED).")
+set(PARALLEL_CORES 4 CACHE INTEGER "Number of cores that can be used in parallel.")
 
 set(OPENANN_VERSION_NUMBER "1.1.0")
 set(OPENANN_URL "https://github.com/OpenANN/OpenANN")
