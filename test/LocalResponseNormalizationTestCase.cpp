@@ -3,7 +3,6 @@
 #include "LayerAdapter.h"
 #include <OpenANN/layers/LocalResponseNormalization.h>
 
-using namespace OpenANN;
 
 void LocalResponseNormalizationTestCase::run()
 {
@@ -12,11 +11,11 @@ void LocalResponseNormalizationTestCase::run()
 
 void LocalResponseNormalizationTestCase::localResponseNormalizationInputGradient()
 {
-  OutputInfo info;
+  OpenANN::OutputInfo info;
   info.dimensions.push_back(3);
   info.dimensions.push_back(3);
   info.dimensions.push_back(3);
-  LocalResponseNormalization layer(info, 1, 3, 1e-5, 0.75);
+  OpenANN::LocalResponseNormalization layer(info, 1, 3, 1e-5, 0.75);
   LayerAdapter opt(layer, info);
 
   Eigen::MatrixXd X = Eigen::MatrixXd::Random(2, 3 * 3 * 3);
@@ -24,7 +23,7 @@ void LocalResponseNormalizationTestCase::localResponseNormalizationInputGradient
   opt.trainingSet(X, Y);
   Eigen::MatrixXd gradient = opt.inputGradient();
   ASSERT_EQUALS(gradient.rows(), 2);
-  Eigen::MatrixXd estimatedGradient = FiniteDifferences::inputGradient(X, Y,
+  Eigen::MatrixXd estimatedGradient = OpenANN::FiniteDifferences::inputGradient(X, Y,
                                       opt);
   for(int j = 0; j < gradient.rows(); j++)
     for(int i = 0; i < gradient.cols(); i++)

@@ -3,8 +3,6 @@
 #include "LayerAdapter.h"
 #include <OpenANN/layers/Dropout.h>
 
-using namespace OpenANN;
-
 void DropoutTestCase::run()
 {
   RUN(DropoutTestCase, dropout);
@@ -14,12 +12,12 @@ void DropoutTestCase::dropout()
 {
   double dropoutProbability = 0.5;
   int samples = 10000;
-  OutputInfo info;
+  OpenANN::OutputInfo info;
   info.dimensions.push_back(samples);
-  Dropout layer(info, dropoutProbability);
+  OpenANN::Dropout layer(info, dropoutProbability);
   std::vector<double*> parameterPointers;
   std::vector<double*> parameterDerivativePointers;
-  OutputInfo info2 = layer.initialize(parameterPointers,
+  OpenANN::OutputInfo info2 = layer.initialize(parameterPointers,
                                       parameterDerivativePointers);
   ASSERT_EQUALS(info2.dimensions.size(), 1);
   ASSERT_EQUALS(info2.dimensions[0], samples);
