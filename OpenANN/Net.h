@@ -49,7 +49,6 @@ protected:
   std::stringstream architecture;
 
 public:
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   /**
    * Create feedforward neural network.
    */

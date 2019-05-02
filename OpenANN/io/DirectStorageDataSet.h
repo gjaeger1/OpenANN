@@ -34,7 +34,7 @@ protected:
   Evaluator* evaluator; //!< Do not delete the evaluator!
 
 public:
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
   /**
    * Create an instance of DirectStorageDataSet.
    * @param in contains an instance in each row

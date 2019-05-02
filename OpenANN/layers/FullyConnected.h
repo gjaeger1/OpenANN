@@ -78,7 +78,6 @@ protected:
   Regularization regularization;
 
 public:
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   FullyConnected(OutputInfo info, int J, bool bias, ActivationFunction act,
                  double stdDev, Regularization regularization);
   virtual OutputInfo initialize(std::vector<double*>& parameterPointers,

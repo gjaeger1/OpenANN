@@ -30,7 +30,6 @@ class DataStream
   Optimizer* opt; //!< Do not delete this!
   Learner* learner; //!< Do not delete this!
 public:
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   /**
    * Create a data stream.
    * @param cacheSize size of the internal data cache
