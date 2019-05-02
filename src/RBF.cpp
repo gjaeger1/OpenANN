@@ -71,15 +71,15 @@ void RBF::updatedParameters()
 void RBF::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
                                       bool dropout, double* error)
 {
-  assert(!this->W.hasNaN());
-  assert(!this->b.hasNaN());
+  if(this->W.hasNaN()) std::cout << "W has NaNs!\n";
+  if(this->b.hasNaN()) std::cout << "b has NaNs!\n";
 
   const int N = x->rows();
   this->y.resize(N, Eigen::NoChange);
   this->dist.resize(N, Eigen::NoChange);
   this->x = x;
 
-  assert(!this->x->hasNaN());
+  if(this->x->hasNaN()) std::cout << "x has NaNs!\n";
 
   // Activate neurons
   a.resize(N, Eigen::NoChange);
@@ -89,13 +89,13 @@ void RBF::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
     // a = squared_error * epsilon
     a.row(r) = this->dist.row(r).transpose().array() * b.array();
   }
-  assert(!this->dist.hasNaN());
-  assert(!this->a.hasNaN());
+  if(this->dist.hasNaN()) std::cout << "dist has NaNs!\n";
+  if(this->a.hasNaN()) std::cout << "a has NaNs!\n";
 
   // Compute output
   this->gaussianActivationFunction(a, this->y);
 
-  assert(!this->y.hasNaN());
+  if(this->y.hasNaN()) std::cout << "y has NaNs!\n";
 
   // Add regularization error
   if(error && regularization.l1Penalty > 0.0)
@@ -104,13 +104,8 @@ void RBF::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
     *error += regularization.l2Penalty * W.array().square().sum() / 2.0;
   y = &(this->y);
 
-  assert(!y->hasNaN());
+  if(y->hasNaN()) std::cout << "y has now NaNs!\n";
 
-  if(y->hasNaN())
-  {
-     std::cout << "y has NaN values:\n" << *y << std::endl;
-     exit(EXIT_FAILURE);
-  }
 }
 
 void RBF::backpropagate(Eigen::MatrixXd* ein,
@@ -124,10 +119,10 @@ void RBF::backpropagate(Eigen::MatrixXd* ein,
   this->gaussianActivationFunctionDerivative(y, yd);
 
 
-  assert(!ein->hasNaN());
-  assert(!yd.hasNaN());
+  if(ein->hasNaN()) std::cout << "ein has NaNs!\n";
+  if(yd.hasNaN()) std::cout << "yd has NaNs!\n";
   deltas = yd.cwiseProduct(*ein);
-  assert(!deltas.hasNaN());
+  if(deltas.hasNaN()) std::cout << "deltas has NaNs!\n";
 
   // Weight derivatives
   Wd.setZero();
@@ -135,25 +130,25 @@ void RBF::backpropagate(Eigen::MatrixXd* ein,
   {
         Wd += (((W.rowwise()-x->row(r)).array().colwise()* b.array()).colwise() * deltas.array().row(r).transpose()).matrix()* 2.0;
   }
-  assert(!Wd.hasNaN());
+  if(Wd.hasNaN()) std::cout << "Wd has NaNs!\n";
 
   // bias derivatives
   bd = deltas.cwiseProduct(this->dist).colwise().sum();
-  assert(!bd.hasNaN());
+  if(bd.hasNaN()) std::cout << "bd has NaNs!\n";
 
   if(regularization.l1Penalty > 0.0)
     Wd.array() += regularization.l1Penalty * W.array() / W.array().abs();
   if(regularization.l2Penalty > 0.0)
     Wd += regularization.l2Penalty * W;
 
-  assert(!Wd.hasNaN());
+  if(Wd.hasNaN()) std::cout << "Wd has now NaNs!\n";
 
   // Prepare error signals for previous layer
   if(backpropToPrevious)
     this->backpropDeltaFirstPart(*x, deltas, e); // gradient of input-function derived to inputs -> W only for weighted sum
 
 
-  assert(!this->e.hasNaN());
+  if(this->e.hasNaN()) std::cout << "e has NaNs!\n";
 
   eout = &e;
 }
