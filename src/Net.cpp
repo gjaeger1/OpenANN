@@ -786,6 +786,9 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
   for(int p = 0; p < P; p++)
     grad(p) = *derivatives[p];
   grad /= N;
+
+  if(grad.hasNaN())
+    std::cout << "NaN values found in gradient!\n";
 }
 
 void Net::initializeNetwork()
@@ -803,6 +806,10 @@ void Net::initializeNetwork()
 
 void Net::forwardPropagate(double* error)
 {
+
+  if(tempInput.hasNaN())
+    std::cout << "NaN values found in inputs!\n";
+
   Eigen::MatrixXd* y = &tempInput;
   for(std::vector<Layer*>::iterator layer = layers.begin();
       layer != layers.end(); ++layer)
@@ -811,6 +818,9 @@ void Net::forwardPropagate(double* error)
   OPENANN_CHECK_EQUALS(y->cols(), infos.back().outputs());
   if(errorFunction == CE)
     OpenANN::softmax(tempOutput);
+
+  if(tempOutput.hasNaN())
+    std::cout << "NaN values found in inputs!\n";
 }
 
 void Net::backpropagate()
