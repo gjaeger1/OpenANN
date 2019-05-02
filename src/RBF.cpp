@@ -123,6 +123,8 @@ void RBF::backpropagate(Eigen::MatrixXd* ein,
   if(yd.hasNaN()) std::cout << "yd has NaNs!\n";
   deltas = yd.cwiseProduct(*ein);
   if(deltas.hasNaN()) std::cout << "deltas has NaNs!\n";
+  if(W.hasNaN()) std::cout << "W has NaNs!\n";
+  if(b.hasNaN()) std::cout << "b has NaNs!\n";
 
   // Weight derivatives
   Wd.setZero();
