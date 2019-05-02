@@ -105,6 +105,12 @@ void RBF::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
   y = &(this->y);
 
   assert(!y->hasNaN());
+
+  if(y->hasNaN())
+  {
+     std::cout << "y has NaN values:\n" << *y << std::endl;
+     exit(EXIT_FAILURE);
+  }
 }
 
 void RBF::backpropagate(Eigen::MatrixXd* ein,
