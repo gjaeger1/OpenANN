@@ -51,8 +51,8 @@ void RBF::initializeParameters()
   RandomNumberGenerator rng;
   rng.fillNormalDistribution(W, stdDev);
   rng.fillNormalDistribution(b, stdDev);
-  OPENANN_CHECK_MATRIX_BROKEN(this->W);
-  OPENANN_CHECK_MATRIX_BROKEN(this->b);
+  assert(!this->W.hasNaN());
+  assert(!this->b.hasNaN());
 }
 
 void RBF::updatedParameters()
@@ -71,15 +71,15 @@ void RBF::updatedParameters()
 void RBF::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
                                       bool dropout, double* error)
 {
-  OPENANN_CHECK_MATRIX_BROKEN(this->W);
-  OPENANN_CHECK_MATRIX_BROKEN(this->b);
+  assert(!this->W.hasNaN());
+  assert(!this->b.hasNaN());
 
   const int N = x->rows();
   this->y.resize(N, Eigen::NoChange);
   this->dist.resize(N, Eigen::NoChange);
   this->x = x;
 
-  OPENANN_CHECK_MATRIX_BROKEN(*this->x);
+  assert(!this->x->hasNaN());
 
   // Activate neurons
   a.resize(N, Eigen::NoChange);
@@ -89,13 +89,13 @@ void RBF::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
     // a = squared_error * epsilon
     a.row(r) = this->dist.row(r).transpose().array() * b.array();
   }
-  OPENANN_CHECK_MATRIX_BROKEN(this->dist);
-  OPENANN_CHECK_MATRIX_BROKEN(*this->a);
+  assert(!this->dist.hasNaN());
+  assert(!this->a.hasNaN());
 
   // Compute output
   this->gaussianActivationFunction(a, this->y);
 
-  OPENANN_CHECK_MATRIX_BROKEN(this->y);
+  assert(!this->y.hasNaN());
 
   // Add regularization error
   if(error && regularization.l1Penalty > 0.0)
@@ -104,7 +104,7 @@ void RBF::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
     *error += regularization.l2Penalty * W.array().square().sum() / 2.0;
   y = &(this->y);
 
-  OPENANN_CHECK_MATRIX_BROKEN(*y);
+  assert(!y->hasNaN());
 }
 
 void RBF::backpropagate(Eigen::MatrixXd* ein,
@@ -118,10 +118,10 @@ void RBF::backpropagate(Eigen::MatrixXd* ein,
   this->gaussianActivationFunctionDerivative(y, yd);
 
 
-  OPENANN_CHECK_MATRIX_BROKEN(*ein);
-  OPENANN_CHECK_MATRIX_BROKEN(yd);
+  assert(!ein->hasNaN());
+  assert(!yd.hasNaN());
   deltas = yd.cwiseProduct(*ein);
-  OPENANN_CHECK_MATRIX_BROKEN(deltas);
+  assert(!deltas.hasNaN());
 
   // Weight derivatives
   Wd.setZero();
@@ -129,25 +129,25 @@ void RBF::backpropagate(Eigen::MatrixXd* ein,
   {
         Wd += (((W.rowwise()-x->row(r)).array().colwise()* b.array()).colwise() * deltas.array().row(r).transpose()).matrix()* 2.0;
   }
-  OPENANN_CHECK_MATRIX_BROKEN(Wd);
+  assert(!Wd.hasNaN());
 
   // bias derivatives
   bd = deltas.cwiseProduct(this->dist).colwise().sum();
-  OPENANN_CHECK_MATRIX_BROKEN(bd);
+  assert(!bd.hasNaN());
 
   if(regularization.l1Penalty > 0.0)
     Wd.array() += regularization.l1Penalty * W.array() / W.array().abs();
   if(regularization.l2Penalty > 0.0)
     Wd += regularization.l2Penalty * W;
 
-  OPENANN_CHECK_MATRIX_BROKEN(Wd);
+  assert(!Wd.hasNaN());
 
   // Prepare error signals for previous layer
   if(backpropToPrevious)
     this->backpropDeltaFirstPart(*x, deltas, e); // gradient of input-function derived to inputs -> W only for weighted sum
 
 
-  OPENANN_CHECK_MATRIX_BROKEN(this->e);
+  assert(!this->e.hasNaN());
 
   eout = &e;
 }
