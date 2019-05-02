@@ -676,8 +676,18 @@ const Eigen::VectorXd& Net::currentParameters()
 
 void Net::setParameters(const Eigen::VectorXd& parameters)
 {
-  OPENANN_CHECK(!parameters.hasNaN());
-  OPENANN_CHECK(!parameters.array().isInf().any());
+  if(parameters.hasNaN())
+  {
+    std::cerr << "Error - parameters contain NaN's! Ignoring...\n";
+    return;
+  }
+
+  if(parameters.array().isInf().any())
+  {
+    std::cerr << "Error - parameters contain Infs's! Ignoring...\n";
+    return;
+  }
+
   parameterVector = parameters;
   for(int p = 0; p < P; p++)
     *(this->parameters[p]) = parameters(p);
