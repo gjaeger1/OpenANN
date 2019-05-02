@@ -71,7 +71,7 @@ void RBF::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
   this->x = x;
 
   if(this->x->hasNaN())
-    std::cout << "RBF outputs have NaN values!\n";
+    std::cout << "RBF inputs have NaN values!\n";
 
   // Activate neurons
   a.resize(N, Eigen::NoChange);
