@@ -820,7 +820,7 @@ void Net::forwardPropagate(double* error)
     OpenANN::softmax(tempOutput);
 
   if(tempOutput.hasNaN())
-    std::cout << "NaN values found in inputs!\n";
+    std::cout << "NaN values found in outputs!\n";
 }
 
 void Net::backpropagate()
