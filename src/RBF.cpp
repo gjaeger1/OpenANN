@@ -1,5 +1,6 @@
 #include <OpenANN/layers/RBF.h>
 #include <OpenANN/util/Random.h>
+#include <iostream>
 
 namespace OpenANN
 {
@@ -65,9 +66,12 @@ void RBF::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
                                       bool dropout, double* error)
 {
   const int N = x->rows();
-  this->y.conservativeResize(N, Eigen::NoChange);
+  this->y.resize(N, Eigen::NoChange);
   this->dist.resize(N, Eigen::NoChange);
   this->x = x;
+
+  if(this->x->hasNaN())
+    std::cout << "RBF outputs have NaN values!\n";
 
   // Activate neurons
   a.resize(N, Eigen::NoChange);
@@ -78,8 +82,14 @@ void RBF::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
     a.row(r) = this->dist.row(r).transpose().array() * b.array();
   }
 
+  if(a.hasNaN())
+    std::cout << "RBF activations have NaN values!\n";
+
   // Compute output
   this->gaussianActivationFunction(a, this->y);
+
+  if(this->y.hasNaN())
+    std::cout << "RBF outputs have NaN values!\n";
 
   // Add regularization error
   if(error && regularization.l1Penalty > 0.0)
@@ -94,7 +104,7 @@ void RBF::backpropagate(Eigen::MatrixXd* ein,
                                    bool backpropToPrevious)
 {
   const int N = a.rows();
-  yd.conservativeResize(N, Eigen::NoChange);
+  yd.resize(N, Eigen::NoChange);
 
   // Derive activations
   this->gaussianActivationFunctionDerivative(y, yd);
