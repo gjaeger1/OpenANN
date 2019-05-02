@@ -776,6 +776,9 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
     T.row(n) = trainSet->getTarget(*it);
   }
 
+  if(T.hasNaN())
+    std::cout << "NaN values found in targets!\n";
+
   value = 0;
   forwardPropagate(&value);
   tempError = tempOutput - T;  //TODO: Does this mean that we always use the quadratic error? We should see here the derivation of the cost function to the output of the individual neurons
