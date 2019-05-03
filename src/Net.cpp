@@ -828,6 +828,9 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
 
 void Net::initializeNetwork()
 {
+  if(initialized)
+    throw OpenANNException("Tried to initialize network again.");
+
   P = parameters.size();
   tempInput.resize(1, infos[0].outputs());
   tempOutput.resize(1, infos.back().outputs());
