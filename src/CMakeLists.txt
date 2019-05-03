@@ -18,5 +18,8 @@ if(BLAS_FOUND)
   target_link_libraries(openann ${BLAS_LIBRARIES})
 endif()
 
+target_link_libraries(openann ${FOUNDATION_LDFLAGS})
+target_include_directories(openann PUBLIC ${FOUNDATION_INCLUDE_DIRS})
+target_compile_options(openann PUBLIC ${FOUNDATION_CFLAGS_OTHER})
 target_link_libraries(openann alglib)
 install(TARGETS openann DESTINATION lib)

@@ -49,6 +49,7 @@ public:
   virtual Eigen::VectorXd& getInstance(int i);
   virtual Eigen::VectorXd& getTarget(int i);
   virtual void finishIteration(Learner& learner);
+  virtual void saveCSV(const std::string& path) const override;
 };
 
 } // namespace OpenANN

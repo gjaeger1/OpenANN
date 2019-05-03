@@ -87,8 +87,10 @@ void RBF::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
   {
     this->dist.row(r) = (W.rowwise()- x->row(r)).array().square().rowwise().sum().transpose();
     // a = squared_error * epsilon
-    a.row(r) = this->dist.row(r).transpose().array() * b.array();
+    a.row(r) = this->dist.row(r).transpose().array() * b.array().square();
   }
+  if(this->dist.array().isInf().any()) std::cout << "dist has Inf!\n";
+  if(this->a.array().isInf().any()) std::cout << "a has Inf!\n";
   if(this->dist.hasNaN()) std::cout << "dist has NaNs!\n";
   if(this->a.hasNaN()) std::cout << "a has NaNs!\n";
 
@@ -130,12 +132,13 @@ void RBF::backpropagate(Eigen::MatrixXd* ein,
   Wd.setZero();
   for(std::size_t r = 0; r < (std::size_t)x->rows(); r++)
   {
-        Wd += (((W.rowwise()-x->row(r)).array().colwise()* b.array()).colwise() * deltas.array().row(r).transpose()).matrix()* 2.0;
+        Wd += (((W.rowwise()-x->row(r)).array().colwise()*b.array().square()).colwise() * deltas.array().row(r).transpose()).matrix()* 2.0;
   }
   if(Wd.hasNaN()) std::cout << "Wd has NaNs!\n";
 
   // bias derivatives
-  bd = deltas.cwiseProduct(this->dist).colwise().sum();
+  Eigen::MatrixXd tmpBd = this->dist.array().rowwise()*b.array().transpose()*2.0;
+  bd = deltas.cwiseProduct(tmpBd).colwise().sum().array();
   if(bd.hasNaN()) std::cout << "bd has NaNs!\n";
 
   if(regularization.l1Penalty > 0.0)
@@ -172,6 +175,21 @@ Eigen::VectorXd RBF::getParameters()
   return p;
 }
 
+void RBF::gaussianActivationFunction(const Eigen::MatrixXd& a, Eigen::MatrixXd& y)
+{
+    Eigen::MatrixXd tmp = a*-1.0;
+    y = tmp.array().exp();
+    if(y.array().isInf().any()) std::cout << "y has Inf values\n" << "a:\n" << a << "\ny:\n" << y;
+    if(y.hasNaN()) std::cout << "y has NaNs in activation function\n";
+}
+
+void RBF::gaussianActivationFunctionDerivative(const Eigen::MatrixXd& y, Eigen::MatrixXd& yd)
+{
+    yd = -1.0*y;
+
+    if(yd.hasNaN()) std::cout << "yd has NaNs in activation function derivative\n";
+}
+
 void RBF::backpropDeltaFirstPart(const Eigen::MatrixXd& in, const Eigen::MatrixXd& deltas,  Eigen::MatrixXd& ndeltas) const
 {
   // loop over samples
@@ -185,7 +203,7 @@ void RBF::backpropDeltaFirstPart(const Eigen::MatrixXd& in, const Eigen::MatrixX
         for(std::size_t k = 0; k < deltas.cols(); k++) // k-th neuron in l+1 layer -> the current layer
         {
             // actual gradient of euclidean distance function derived to its inputs aj
-            auto grad = -2.0*(W(k,j) - in(n,j))*b(k);
+            auto grad = -2.0*(W(k,j) - in(n,j))*b(k)*b(k);
             ndeltas(n,j) += deltas(n,k) * grad;
         }
     }

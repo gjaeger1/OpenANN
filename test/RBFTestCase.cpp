@@ -53,13 +53,13 @@ void RBFTestCase::forward()
   ASSERT_EQUALS_DELTA(Wd(0), 2.0*(1.0-0.5)*1.0*1.0*-a, 1e-7);
   ASSERT_EQUALS_DELTA(Wd(1), 2.0*(1.0-1.0)*1.0*1.0*-a, 1e-7);
   ASSERT_EQUALS_DELTA(Wd(2), 2.0*(1.0-2.0)*1.0*1.0*-a, 1e-7);
-  ASSERT_EQUALS_DELTA(Wd(3), 1.25*1.0*-a, 1e-7); // bias
+  ASSERT_EQUALS_DELTA(Wd(3), 1.25*1.0*-a*2.0, 1e-7); // bias
 
   // j == 1
   ASSERT_EQUALS_DELTA(Wd(4), 2.0*(1.0-0.5)*1.0*2.0*-a, 1e-7);
   ASSERT_EQUALS_DELTA(Wd(5), 2.0*(1.0-1.0)*1.0*2.0*-a, 1e-7);
   ASSERT_EQUALS_DELTA(Wd(6), 2.0*(1.0-2.0)*1.0*2.0*-a, 1e-7);
-  ASSERT_EQUALS_DELTA(Wd(7), 1.25*2.0*-a, 1e-7); // bias
+  ASSERT_EQUALS_DELTA(Wd(7), 1.25*2.0*-a*2.0, 1e-7); // bias
   ASSERT(e2 != 0);
 }
 
@@ -149,13 +149,13 @@ void RBFTestCase::parallelForward()
   ASSERT_EQUALS_DELTA(Wd(0), 2.0*2.0*(1.0-0.5)*1.0*1.0*-a, 1e-7);
   ASSERT_EQUALS_DELTA(Wd(1), 2.0*2.0*(1.0-1.0)*1.0*1.0*-a, 1e-7);
   ASSERT_EQUALS_DELTA(Wd(2), 2.0*2.0*(1.0-2.0)*1.0*1.0*-a, 1e-7);
-  ASSERT_EQUALS_DELTA(Wd(3), 2.0*1.25*1.0*-a, 1e-7); // bias
+  ASSERT_EQUALS_DELTA(Wd(3), 2.0*1.25*1.0*-a*2.0, 1e-7); // bias
 
   // j == 1
   ASSERT_EQUALS_DELTA(Wd(4), 2.0*2.0*(1.0-0.5)*1.0*2.0*-a, 1e-7);
   ASSERT_EQUALS_DELTA(Wd(5), 2.0*2.0*(1.0-1.0)*1.0*2.0*-a, 1e-7);
   ASSERT_EQUALS_DELTA(Wd(6), 2.0*2.0*(1.0-2.0)*1.0*2.0*-a, 1e-7);
-  ASSERT_EQUALS_DELTA(Wd(7), 2.0*1.25*2.0*-a, 1e-7); // bias
+  ASSERT_EQUALS_DELTA(Wd(7), 2.0*1.25*2.0*-a*2.0, 1e-7); // bias
   ASSERT(e2 != 0);
 }
 

@@ -58,8 +58,7 @@ void MBSGD::setStopCriteria(const StoppingCriteria& stop)
 void MBSGD::optimize()
 {
   OPENANN_CHECK(opt);
-  StoppingInterrupt interrupt;
-  while(step() && !interrupt.isSignaled())
+  while(step())
   {
     std::stringstream ss;
 
@@ -102,6 +101,12 @@ bool MBSGD::step()
     opt->errorGradient(startN, endN, error, gradient);
     accumulatedError += error;
     OPENANN_CHECK_MATRIX_BROKEN(gradient);
+
+    if(gradient.hasNaN())
+    {
+        std::cerr << "Detected NaN values in gradient! Iteration = " << iteration << " batches = " << b << " Aborting...\n";
+        return false;
+    }
 
     if(useGain)
     {

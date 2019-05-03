@@ -101,6 +101,24 @@ public:
    * @return this for chaining
    */
   virtual Learner& removeValidationSet();
+
+  /**
+   * Saves the training set.
+   */
+  virtual void saveTrainingSet(const std::string& path) const
+  {
+    if(this->trainSet != 0)
+      this->trainSet->saveCSV(path);
+  };
+
+  /**
+   * Saves the validation set.
+   */
+  virtual void saveValidationSet(const std::string& path) const
+  {
+    if(this->validSet != 0)
+      this->validSet->saveCSV(path);
+  };
 };
 
 } // namespace OpenANN

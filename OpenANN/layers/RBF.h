@@ -92,8 +92,8 @@ public:
   virtual Eigen::VectorXd getParameters();
 
 protected:
-  virtual void gaussianActivationFunction(const Eigen::MatrixXd& a, Eigen::MatrixXd& y) {y = ((-1.0*a).array().exp()).matrix();};
-  virtual void gaussianActivationFunctionDerivative(const Eigen::MatrixXd& y, Eigen::MatrixXd& yd) {yd = -1.0*y;};
+  virtual void gaussianActivationFunction(const Eigen::MatrixXd& a, Eigen::MatrixXd& y);
+  virtual void gaussianActivationFunctionDerivative(const Eigen::MatrixXd& y, Eigen::MatrixXd& yd);
 
   virtual void backpropDeltaFirstPart(const Eigen::MatrixXd& a, const Eigen::MatrixXd& deltas,  Eigen::MatrixXd& ndeltas) const;
 };

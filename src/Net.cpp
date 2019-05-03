@@ -829,16 +829,28 @@ void Net::forwardPropagate(double* error)
     std::cout << "NaN values found in inputs!\n";
 
   Eigen::MatrixXd* y = &tempInput;
-  for(std::vector<Layer*>::iterator layer = layers.begin();
-      layer != layers.end(); ++layer)
+  int cntLayer = 0;
+  for(std::vector<Layer*>::iterator layer = layers.begin();layer != layers.end(); ++layer)
+  {
     (**layer).forwardPropagate(y, y, dropout, error);
+
+    if(y->hasNaN()) std::cout << cntLayer << ". layer produced NaNs!\n";
+
+    cntLayer++;
+  }
+
   tempOutput = *y;
   OPENANN_CHECK_EQUALS(y->cols(), infos.back().outputs());
   if(errorFunction == CE)
     OpenANN::softmax(tempOutput);
 
   if(tempOutput.hasNaN())
+  {
     std::cout << "NaN values found in outputs!\n";
+    this->saveTrainingSet("inputs_with_nans.csv");
+    this->save("nn_producing_nans.csv");
+    std::cout << "Saved to files...\n";
+  }
 }
 
 void Net::backpropagate()

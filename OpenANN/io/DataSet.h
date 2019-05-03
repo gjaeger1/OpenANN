@@ -57,6 +57,12 @@ public:
    * @param learner learned model
    */
   virtual void finishIteration(Learner& learner) = 0;
+
+  /**
+   * Save data set to CSV file.
+   * @param path Path of the CSV file
+   */
+  virtual void saveCSV(const std::string& path) const {assert(false);};
 };
 
 } // namespace OpenANN

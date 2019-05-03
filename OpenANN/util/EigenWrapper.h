@@ -9,6 +9,8 @@
 #define EIGEN_USE_LAPACK
 #endif
 
+#define EIGEN_DONT_PARALLELIZE
+
 #include <OpenANN/util/AssertionMacros.h>
 #include <Eigen/Core>
 #include <cmath>
