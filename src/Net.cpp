@@ -29,6 +29,7 @@ Net::Net()
 {
   layers.reserve(3);
   infos.reserve(3);
+  architecture.precision(20);
 }
 
 Net::~Net()
@@ -54,6 +55,7 @@ void Net::clearLayers()
 */
 Net::Net(const Net& other) : Learner(other)
 {
+    architecture.precision(20);
     //std::cout << "Using Copy Constructor\n";
     if(this == &other)
         return;
@@ -68,12 +70,12 @@ Net::Net(const Net& other) : Learner(other)
     this->tempOutput = other.tempOutput;
     this->tempError = other.tempError;
 
-
     // copy layers by load/saving them to stringstream
     std::stringstream ss;
-    ss << std::setprecision(20);
-    other.save(ss);
+    ss.precision(20);
+    ss << other.architecture.str();
     this->load(ss);
+    this->setParameters(other.parameterVector);
 }
 
 /**
@@ -82,7 +84,8 @@ Net::Net(const Net& other) : Learner(other)
 Net::Net(Net&& other)  : Learner(other), errorFunction(MSE), dropout(false), initialized(false), P(-1), L(0)
 {
     //std::cout << "Using Move Constructor\n";
-
+    architecture.precision(20);
+    std::swap(this->architecture, other.architecture);
     std::swap(this->infos,other.infos);
     std::swap(this->regularization,other.regularization);
     std::swap(this->errorFunction , other.errorFunction);
@@ -113,6 +116,7 @@ Net& Net::operator=(const Net& other)
     Learner::operator =(other);
 
     this->clearLayers();
+    this->architecture.str(std::string());
 
     this->regularization = other.regularization;
     this->errorFunction = other.errorFunction;
@@ -127,9 +131,10 @@ Net& Net::operator=(const Net& other)
 
     // copy layers by load/saving them to stringstream
     std::stringstream ss;
-    ss << std::setprecision(20);
-    other.save(ss);
+    ss.precision(20);
+    ss << other.architecture.str();
     this->load(ss);
+    this->setParameters(other.parameterVector);
 
     return *this;
 }
@@ -147,7 +152,7 @@ Net& Net::operator=(Net&& other)
     this->clearLayers();
 
     Learner::operator =(other);
-
+    std::swap(this->architecture, other.architecture);
     std::swap(this->infos,other.infos);
     std::swap(this->regularization,other.regularization);
     std::swap(this->errorFunction , other.errorFunction);
