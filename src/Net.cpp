@@ -53,7 +53,7 @@ void Net::clearLayers()
 /**
 * @brief Copy Constructor
 */
-Net::Net(const Net& other) : Learner(other)
+Net::Net(const Net& other) : Learner(other), errorFunction(MSE), dropout(false), initialized(false), P(-1), L(0)
 {
     architecture.precision(20);
     //std::cout << "Using Copy Constructor\n";
@@ -122,6 +122,7 @@ Net& Net::operator=(const Net& other)
     this->errorFunction = other.errorFunction;
     this->dropout = other.dropout;
     this->initialized = false;
+    this->P = -1;
     this->L = 0; // will be set when loading from string stream
     this->tempGradient = other.tempGradient;
     this->tempInput = other.tempInput;
@@ -679,23 +680,29 @@ const Eigen::VectorXd& Net::currentParameters()
   return parameterVector;
 }
 
-void Net::setParameters(const Eigen::VectorXd& parameters)
+void Net::setParameters(const Eigen::VectorXd& newParameters)
 {
-  if(parameters.hasNaN())
+  if(newParameters.hasNaN())
   {
     std::cerr << "Error - parameters contain NaN's! Ignoring...\n";
     return;
   }
 
-  if(parameters.array().isInf().any())
+  if(newParameters.array().isInf().any())
   {
     std::cerr << "Error - parameters contain Infs's! Ignoring...\n";
     return;
   }
 
-  parameterVector = parameters;
+  if(newParameters.size() != this->parameters.size())
+  {
+    std::cerr << "Error - new parameters have size" << newParameters.size() << " but old parameters have size " << this->parameters.size() << ". Ignoring..." << std::endl;
+    return;
+  }
+
+  parameterVector = newParameters;
   for(int p = 0; p < P; p++)
-    *(this->parameters[p]) = parameters(p);
+    *(this->parameters[p]) = newParameters(p);
   for(std::vector<Layer*>::iterator layer = layers.begin();
       layer != layers.end(); ++layer)
     (**layer).updatedParameters();
