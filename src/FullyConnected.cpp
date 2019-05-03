@@ -63,31 +63,17 @@ void FullyConnected::updatedParameters()
 void FullyConnected::forwardPropagate(Eigen::MatrixXd* x, Eigen::MatrixXd*& y,
                                       bool dropout, double* error)
 {
-  if(this->W.hasNaN()) std::cout << "[FC] W has NaNs!\n";
-  if(this->b.hasNaN()) std::cout << "[FC] b has NaNs!\n";
-
   const int N = x->rows();
   this->y.resize(N, Eigen::NoChange);
   this->x = x;
-  if(this->x->hasNaN()) std::cout << "[FC] x has NaNs!\n";
   // Activate neurons
   a = *x * W.transpose();
-  if(this->a.hasNaN())
-  {
-    std::cout << "[FC] a has NaNs!\n";
-    std::cout << "a: \n" << a << "\nW: \n" << W << "\nx:\n" << *x << "\nb:\n" << b << std::endl;
-  }
+
   if(bias)
     a.rowwise() += b.transpose();
 
-  if(this->a.hasNaN())
-  {
-    std::cout << "[FC] a now has NaNs!\n";
-    std::cout << "a: \n" << a << "\nW: \n" << W << "\nx:\n" << *x << "\nb:\n" << b << std::endl;
-  }
   // Compute output
   activationFunction(act, a, this->y);
-  if(this->y.hasNaN()) std::cout << "[FC] y has NaNs!\n";
 
   // Add regularization error
   if(error && regularization.l1Penalty > 0.0)
