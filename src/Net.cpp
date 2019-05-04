@@ -56,6 +56,7 @@ void Net::clearLayers()
 Net::Net(const Net& other) : Learner(other), errorFunction(MSE), dropout(false), initialized(false), P(-1), L(0)
 {
     OPENANN_DEBUG << "Copy Constructor\n";
+    OPENANN_DEBUG << "Before: Other Architecture:\n" << other.architecture.str() << "\n Own Architecture:\n" << this->architecture.str() << "\n";
     architecture.precision(20);
     //std::cout << "Using Copy Constructor\n";
     if(this == &other)
@@ -74,10 +75,11 @@ Net::Net(const Net& other) : Learner(other), errorFunction(MSE), dropout(false),
     // copy layers by load/saving them to stringstream
     std::stringstream ss;
     ss.precision(20);
-    ss << other.architecture.str();
+    ss.str(other.architecture.str());
+    OPENANN_DEBUG << "Copied Architecture:\n" << ss.str() << "\n";
     this->load(ss);
     this->setParameters(other.parameterVector);
-    OPENANN_DEBUG << "Other Architecture:\n" << other.architecture.str() << "\n Own Architecture:\n" << this->architecture.str() << "\n";
+    OPENANN_DEBUG << "After: Other Architecture:\n" << other.architecture.str() << "\n Own Architecture:\n" << this->architecture.str() << "\n";
 }
 
 /**
@@ -86,6 +88,7 @@ Net::Net(const Net& other) : Learner(other), errorFunction(MSE), dropout(false),
 Net::Net(Net&& other)  : Learner(other), errorFunction(MSE), dropout(false), initialized(false), P(-1), L(0)
 {
     OPENANN_DEBUG << "Move Constructor\n";
+    OPENANN_DEBUG << "Before: Other Architecture:\n" << other.architecture.str() << "\n Own Architecture:\n" << this->architecture.str() << "\n";
     //std::cout << "Using Move Constructor\n";
     architecture.precision(20);
     std::swap(this->architecture, other.architecture);
@@ -105,7 +108,7 @@ Net::Net(Net&& other)  : Learner(other), errorFunction(MSE), dropout(false), ini
     this->layers = std::move(other.layers);
     this->parameters = std::move(other.parameters);
     this->derivatives = std::move(other.derivatives);
-    OPENANN_DEBUG << "Other Architecture:\n" << other.architecture.str() << "\n Own Architecture:\n" << this->architecture.str() << "\n";
+    OPENANN_DEBUG << "After: Other Architecture:\n" << other.architecture.str() << "\n Own Architecture:\n" << this->architecture.str() << "\n";
 }
 
 /**
@@ -114,6 +117,7 @@ Net::Net(Net&& other)  : Learner(other), errorFunction(MSE), dropout(false), ini
 Net& Net::operator=(const Net& other)
 {
     OPENANN_DEBUG << "Copy Assignment Operator\n";
+    OPENANN_DEBUG << "Before: Other Architecture:\n" << other.architecture.str() << "\n Own Architecture:\n" << this->architecture.str() << "\n";
     //std::cout << "Using Copy Assignment Operator\n";
     if(this == &other)
         return *this;
@@ -141,7 +145,7 @@ Net& Net::operator=(const Net& other)
     ss << other.architecture.str();
     this->load(ss);
     this->setParameters(other.parameterVector);
-    OPENANN_DEBUG << "Other Architecture:\n" << other.architecture.str() << "\n Own Architecture:\n" << this->architecture.str() << "\n";
+    OPENANN_DEBUG << "After: Other Architecture:\n" << other.architecture.str() << "\n Own Architecture:\n" << this->architecture.str() << "\n";
     return *this;
 }
 
@@ -151,13 +155,14 @@ Net& Net::operator=(const Net& other)
 Net& Net::operator=(Net&& other)
 {
     OPENANN_DEBUG << "Move Assignment Operator\n";
-
+    OPENANN_DEBUG << "Before: Other Architecture:\n" << other.architecture.str() << "\n Own Architecture:\n" << this->architecture.str() << "\n";
     //std::cout << "Using Move Assignment Operator\n";
 
     if(this == &other)
         return *this;
 
     this->clearLayers();
+    this->architecture.str(std::string());
 
     Learner::operator =(other);
     std::swap(this->architecture, other.architecture);
@@ -178,7 +183,7 @@ Net& Net::operator=(Net&& other)
     this->parameters = std::move(other.parameters);
     this->derivatives = std::move(other.derivatives);
 
-    OPENANN_DEBUG << "Other Architecture:\n" << other.architecture.str() << "\n Own Architecture:\n" << this->architecture.str() << "\n";
+    OPENANN_DEBUG << "After: Other Architecture:\n" << other.architecture.str() << "\n Own Architecture:\n" << this->architecture.str() << "\n";
 
     return *this;
 }
@@ -396,10 +401,15 @@ void Net::load(const std::string& fileName)
 void Net::load(std::istream& stream)
 {
   OPENANN_DEBUG << "Net::load\n";
-  std::string type;
+
   while(!stream.eof())
   {
+    std::string type;
     stream >> type;
+
+    if(type == "")
+        return;
+
     if(type == "input")
     {
       int dim1, dim2, dim3;
@@ -580,7 +590,15 @@ void Net::load(std::istream& stream)
     }
     else
     {
-      throw OpenANNException("Unknown layer type: '" + type + "'.");
+      if(stream.eof())
+      {
+        OPENANN_INFO << "Unknown layer type '" << type << "' found at end of stream. Ignoring...";
+        return;
+      }
+      else
+      {
+        throw OpenANNException("Unknown layer type: '" + type + "'.");
+      }
     }
   }
 }
