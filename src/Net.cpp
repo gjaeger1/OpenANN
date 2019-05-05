@@ -676,12 +676,6 @@ std::vector<std::vector<double>> Net::operator()(const std::vector<std::vector<d
     }
     return res;
 }
-/*Eigen::ArrayXd Net::operator()(const Eigen::ArrayXd& x)
-{
-  tempInput = x.matrix();
-  forwardPropagate(0);
-  return tempOutput.array();
-}*/
 
 unsigned int Net::dimension()
 {
@@ -712,19 +706,19 @@ void Net::setParameters(const Eigen::VectorXd& newParameters)
 {
   if(newParameters.hasNaN())
   {
-    std::cerr << "Error - parameters contain NaN's! Ignoring...\n";
+    OPENANN_ERROR << "Error - parameters contain NaN's! Ignoring...\n";
     return;
   }
 
   if(newParameters.array().isInf().any())
   {
-    std::cerr << "Error - parameters contain Infs's! Ignoring...\n";
+    OPENANN_ERROR << "Error - parameters contain Infs's! Ignoring...\n";
     return;
   }
 
   if(newParameters.size() != this->parameters.size())
   {
-    std::cerr << "Error - new parameters have size" << newParameters.size() << " but old parameters have size " << this->parameters.size() << ". Ignoring..." << std::endl;
+    OPENANN_ERROR << "Error - new parameters have size" << newParameters.size() << " but old parameters have size " << this->parameters.size() << ". Ignoring..." << std::endl;
     return;
   }
 
@@ -817,6 +811,16 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
                         double& value, Eigen::VectorXd& grad)
 {
   const int N = endN - startN;
+
+  if(N <= 0)
+  {
+    OPENANN_ERROR << "Number of samples is " << N << ". Aborting...\n";
+    grad.setZero();
+    value = 0;
+    return;
+  }
+
+
   tempInput.conservativeResize(N, trainSet->inputs());
   Eigen::MatrixXd T(N, trainSet->outputs());
   int n = 0;
@@ -825,9 +829,6 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
     tempInput.row(n) = trainSet->getInstance(*it);
     T.row(n) = trainSet->getTarget(*it);
   }
-
-  if(T.hasNaN())
-    std::cout << "NaN values found in targets!\n";
 
   value = 0;
   forwardPropagate(&value);
@@ -839,9 +840,6 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
   for(int p = 0; p < P; p++)
     grad(p) = *derivatives[p];
   grad /= N;
-
-  if(grad.hasNaN())
-    std::cout << "NaN values found in gradient!\n";
 }
 
 void Net::initializeNetwork()
@@ -863,17 +861,11 @@ void Net::initializeNetwork()
 void Net::forwardPropagate(double* error)
 {
 
-  if(tempInput.hasNaN())
-    std::cout << "NaN values found in inputs!\n";
-
   Eigen::MatrixXd* y = &tempInput;
   int cntLayer = 0;
   for(std::vector<Layer*>::iterator layer = layers.begin();layer != layers.end(); ++layer)
   {
     (**layer).forwardPropagate(y, y, dropout, error);
-
-    if(y->hasNaN()) std::cout << cntLayer << ". layer produced NaNs!\n";
-
     cntLayer++;
   }
 
@@ -881,19 +873,12 @@ void Net::forwardPropagate(double* error)
   OPENANN_CHECK_EQUALS(y->cols(), infos.back().outputs());
   if(errorFunction == CE)
     OpenANN::softmax(tempOutput);
-
-  if(tempOutput.hasNaN())
-  {
-    std::cout << "NaN values found in outputs!\n";
-    this->saveTrainingSet("inputs_with_nans.csv");
-    this->save("nn_producing_nans.csv");
-    std::cout << "Saved to files...\n";
-  }
 }
 
 void Net::backpropagate()
 {
   Eigen::MatrixXd* e = &tempError;
+
   int l = L;
   for(std::vector<Layer*>::reverse_iterator layer = layers.rbegin();
       layer != layers.rend(); ++layer, --l)
@@ -901,6 +886,7 @@ void Net::backpropagate()
     // Backprop of dE/dX is not required in input layer and first hidden layer
     const bool backpropToPrevious = l > 2;
     (**layer).backpropagate(e, e, backpropToPrevious);
+
   }
 }
 

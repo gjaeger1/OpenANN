@@ -104,7 +104,7 @@ bool MBSGD::step()
 
     if(gradient.hasNaN())
     {
-        std::cerr << "Detected NaN values in gradient! Iteration = " << iteration << " batches = " << b << " Aborting...\n";
+        OPENANN_ERROR << "Detected NaN values in gradient! Iteration = " << iteration << " batches = " << b << " Aborting...\n";
         return false;
     }
 

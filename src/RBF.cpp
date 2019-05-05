@@ -107,7 +107,6 @@ void RBF::backpropagate(Eigen::MatrixXd* ein,
   // Derive activations
   this->gaussianActivationFunctionDerivative(y, yd);
 
-
   deltas = yd.cwiseProduct(*ein);
 
   // Weight derivatives
@@ -116,6 +115,7 @@ void RBF::backpropagate(Eigen::MatrixXd* ein,
   {
         Wd += (((W.rowwise()-x->row(r)).array().colwise()*b.array().square()).colwise() * deltas.array().row(r).transpose()).matrix()* 2.0;
   }
+
 
   // bias derivatives
   Eigen::MatrixXd tmpBd = this->dist.array().rowwise()*b.array().transpose()*2.0;

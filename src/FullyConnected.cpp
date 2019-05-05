@@ -94,6 +94,7 @@ void FullyConnected::backpropagate(Eigen::MatrixXd* ein,
   deltas = yd.cwiseProduct(*ein);
   // Weight derivatives
   Wd = deltas.transpose() * *x; // delta * derivation of input-function (weighted sum) to weights
+
   if(bias)
     bd = deltas.colwise().sum().transpose(); //TODO: should we devide by number of rows in x here? -> number of samples // delta * derivation of input-function (weighted sum) to weights
   if(regularization.l1Penalty > 0.0)
@@ -101,8 +102,10 @@ void FullyConnected::backpropagate(Eigen::MatrixXd* ein,
   if(regularization.l2Penalty > 0.0)
     Wd += regularization.l2Penalty * W;
   // Prepare error signals for previous layer
+
   if(backpropToPrevious)
     e = deltas * W; // deltas * derivation of the input function to its inputs
+
   eout = &e;
 }
 
