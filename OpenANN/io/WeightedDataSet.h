@@ -30,9 +30,9 @@ public:
   WeightedDataSet(DataSet& dataSet, const Eigen::VectorXd& weights,
                   bool deterministic);
   WeightedDataSet& updateWeights(const Eigen::VectorXd& weights);
-  virtual int samples();
-  virtual int inputs();
-  virtual int outputs();
+  virtual int samples() const;
+  virtual int inputs() const;
+  virtual int outputs() const;
   virtual Eigen::VectorXd& getInstance(int n);
   virtual Eigen::VectorXd& getTarget(int n);
   virtual void finishIteration(Learner& learner) {}

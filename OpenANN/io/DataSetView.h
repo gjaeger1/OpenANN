@@ -61,17 +61,17 @@ public:
   /**
    * See OpenANN::DataSet::samples()
    */
-  virtual int samples();
+  virtual int samples()  const;
 
   /**
    * See OpenANN::DataSet::inputs()
    */
-  virtual int inputs();
+  virtual int inputs()  const;
 
   /**
    * See OpenANN::DataSet::inputs()
    */
-  virtual int outputs();
+  virtual int outputs()  const;
 
   /**
    * See OpenANN::DataSet::getInstance(int)

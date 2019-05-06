@@ -28,17 +28,17 @@ public:
    * for one iteration of the optimization algorithm.
    * @return number of examples
    */
-  virtual int samples() = 0;
+  virtual int samples() const = 0;
   /**
    * Input dimensions of instances.
    * @return number of inputs
    */
-  virtual int inputs() = 0;
+  virtual int inputs() const = 0;
   /**
    * Output dimensions of instances.
    * @return number of outputs
    */
-  virtual int outputs() = 0;
+  virtual int outputs() const = 0;
   /**
    * Get the input of the ith instance.
    * @param n number of instance

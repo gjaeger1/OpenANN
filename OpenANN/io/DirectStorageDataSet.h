@@ -43,9 +43,9 @@ public:
    */
   DirectStorageDataSet(const Eigen::MatrixXd* in, const Eigen::MatrixXd* out = 0,
                        Evaluator* evaluator = 0);
-  virtual int samples() { return N; }
-  virtual int inputs() { return D; }
-  virtual int outputs() { return F; }
+  virtual int samples()  const { return N; }
+  virtual int inputs()  const { return D; }
+  virtual int outputs()  const { return F; }
   virtual Eigen::VectorXd& getInstance(int i);
   virtual Eigen::VectorXd& getTarget(int i);
   virtual void finishIteration(Learner& learner);

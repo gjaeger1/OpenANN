@@ -18,17 +18,17 @@ WeightedDataSet& WeightedDataSet::updateWeights(const Eigen::VectorXd& weights)
   return *this;
 }
 
-int WeightedDataSet::samples()
+int WeightedDataSet::samples()  const
 {
   return dataSet.samples();
 }
 
-int WeightedDataSet::inputs()
+int WeightedDataSet::inputs()  const
 {
   return dataSet.inputs();
 }
 
-int WeightedDataSet::outputs()
+int WeightedDataSet::outputs()  const
 {
   return dataSet.outputs();
 }

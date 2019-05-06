@@ -16,17 +16,17 @@ DataSetView::DataSetView(const DataSetView& ds)
 {
 }
 
-int DataSetView::samples()
+int DataSetView::samples()  const
 {
   return indices.size();
 }
 
-int DataSetView::inputs()
+int DataSetView::inputs()  const
 {
   return dataset->inputs();
 }
 
-int DataSetView::outputs()
+int DataSetView::outputs()  const
 {
   return dataset->outputs();
 }

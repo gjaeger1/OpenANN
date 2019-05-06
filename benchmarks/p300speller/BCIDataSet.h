@@ -86,9 +86,9 @@ public:
   void decimate(int factor = 1);
   void compress(OpenANN::Compressor& compressor);
   void reset();
-  virtual int samples() { return N; }
-  virtual int inputs() { return D; }
-  virtual int outputs() { return F; }
+  virtual int samples()  const { return N; }
+  virtual int inputs()  const { return D; }
+  virtual int outputs()  const { return F; }
   virtual Eigen::VectorXd& getInstance(int i);
   void getOffsets(int i, int& epoch, int& t0);
   void buildInstance(int epoch, int t0);
