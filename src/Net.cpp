@@ -25,7 +25,7 @@ namespace OpenANN
 {
 
 Net::Net()
-  : errorFunction(MSE), dropout(false), initialized(false), P(-1), L(0)
+  : errorFunction(MSE), dropout(false), backpropToAll(false), initialized(false), P(-1), L(0)
 {
   layers.reserve(3);
   infos.reserve(3);
@@ -53,7 +53,7 @@ void Net::clearLayers()
 /**
 * @brief Copy Constructor
 */
-Net::Net(const Net& other) : Learner(other), errorFunction(MSE), dropout(false), initialized(false), P(-1), L(0)
+Net::Net(const Net& other) : Learner(other), errorFunction(MSE), dropout(false), backpropToAll(false), initialized(false), P(-1), L(0)
 {
     OPENANN_DEBUG << "Copy Constructor\n";
     OPENANN_DEBUG << "Before: Other Architecture:\n" << other.architecture.str() << "\n Own Architecture:\n" << this->architecture.str() << "\n";
@@ -65,6 +65,7 @@ Net::Net(const Net& other) : Learner(other), errorFunction(MSE), dropout(false),
     this->regularization = other.regularization;
     this->errorFunction = other.errorFunction;
     this->dropout = other.dropout;
+    this->backpropToAll = other.backpropToAll;
     this->L = 0; // will be set when loading from string stream
     this->initialized = false;
     this->tempGradient = other.tempGradient;
@@ -85,7 +86,7 @@ Net::Net(const Net& other) : Learner(other), errorFunction(MSE), dropout(false),
 /**
 * @brief Move Contstructor
 */
-Net::Net(Net&& other)  : Learner(other), errorFunction(MSE), dropout(false), initialized(false), P(-1), L(0)
+Net::Net(Net&& other)  : Learner(other), errorFunction(MSE), dropout(false), backpropToAll(false), initialized(false), P(-1), L(0)
 {
     OPENANN_DEBUG << "Move Constructor\n";
     OPENANN_DEBUG << "Before: Other Architecture:\n" << other.architecture.str() << "\n Own Architecture:\n" << this->architecture.str() << "\n";
@@ -96,6 +97,7 @@ Net::Net(Net&& other)  : Learner(other), errorFunction(MSE), dropout(false), ini
     std::swap(this->regularization,other.regularization);
     std::swap(this->errorFunction , other.errorFunction);
     std::swap(this->dropout , other.dropout);
+    std::swap(this->backpropToAll, other.backpropToAll);
     std::swap(this->initialized , other.initialized);
     std::swap(this->P, other.P);
     std::swap(this->L, other.L);
@@ -130,6 +132,7 @@ Net& Net::operator=(const Net& other)
     this->regularization = other.regularization;
     this->errorFunction = other.errorFunction;
     this->dropout = other.dropout;
+    this->backpropToAll = other.backpropToAll;
     this->initialized = false;
     this->P = -1;
     this->L = 0; // will be set when loading from string stream
@@ -170,6 +173,7 @@ Net& Net::operator=(Net&& other)
     std::swap(this->regularization,other.regularization);
     std::swap(this->errorFunction , other.errorFunction);
     std::swap(this->dropout , other.dropout);
+    std::swap(this->backpropToAll, other.backpropToAll);
     std::swap(this->initialized , other.initialized);
     std::swap(this->P, other.P);
     std::swap(this->L, other.L);
@@ -609,6 +613,12 @@ Net& Net::useDropout(bool activate)
   return *this;
 }
 
+Net& Net::backpropagateThroughAllLayers(bool activate)
+{
+  this->backpropToAll = activate;
+  return *this;
+}
+
 Net& Net::setRegularization(double l1Penalty, double l2Penalty,
                             double maxSquaredWeightNorm)
 {
@@ -884,10 +894,30 @@ void Net::backpropagate()
       layer != layers.rend(); ++layer, --l)
   {
     // Backprop of dE/dX is not required in input layer and first hidden layer
-    const bool backpropToPrevious = l > 2;
+    bool backpropToPrevious = true;
+    if(!this->backpropToAll)
+        backpropToPrevious = l > 2;
+
     (**layer).backpropagate(e, e, backpropToPrevious);
 
   }
+
+  tempError = *e;
+}
+
+Eigen::MatrixXd Net::getLayerError() const
+{
+    return tempError;
+}
+
+Eigen::VectorXd Net::currentGradients()
+{
+    Eigen::VectorXd grad(P);
+
+    for(int p = 0; p < P; p++)
+        grad(p) = *derivatives[p];
+
+    return grad;
 }
 
 }

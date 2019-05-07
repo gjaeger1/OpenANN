@@ -40,6 +40,7 @@ protected:
   Regularization regularization;
   ErrorFunction errorFunction;
   bool dropout;
+  bool backpropToAll;
 
   bool initialized;
   int P, L;
@@ -361,6 +362,20 @@ net2.load("mlnn.net");
   ///@}
 
   /**
+   * Toggle whether or not to propagate error back through all layers.
+   * @param activate turn backpropagation for all layer on or off
+   * @return this for chaining
+   */
+  Net& backpropagateThroughAllLayers(bool activate);
+
+  /**
+   * @brief Get the error propagated back to the output layer
+   */
+  virtual Eigen::MatrixXd getLayerError() const;
+
+  Eigen::VectorXd currentGradients();
+
+  /**
    * @name Inherited Functions
    */
   ///@{
@@ -388,6 +403,8 @@ net2.load("mlnn.net");
                              double& value, Eigen::VectorXd& grad);
   virtual void finishedIteration();
   ///@}
+
+
 
 protected:
   void initializeNetwork();
