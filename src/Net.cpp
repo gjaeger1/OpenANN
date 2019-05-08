@@ -68,10 +68,6 @@ Net::Net(const Net& other) : Learner(other), errorFunction(MSE), dropout(false),
     this->backpropToAll = other.backpropToAll;
     this->L = 0; // will be set when loading from string stream
     this->initialized = false;
-    this->tempGradient = other.tempGradient;
-    this->tempInput = other.tempInput;
-    this->tempOutput = other.tempOutput;
-    this->tempError = other.tempError;
 
     // copy layers by load/saving them to stringstream
     std::stringstream ss;
@@ -136,10 +132,6 @@ Net& Net::operator=(const Net& other)
     this->initialized = false;
     this->P = -1;
     this->L = 0; // will be set when loading from string stream
-    this->tempGradient = other.tempGradient;
-    this->tempInput = other.tempInput;
-    this->tempOutput = other.tempOutput;
-    this->tempError = other.tempError;
 
 
     // copy layers by load/saving them to stringstream
@@ -831,7 +823,7 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
   }
 
 
-  tempInput.conservativeResize(N, trainSet->inputs());
+  tempInput.resize(N, trainSet->inputs());
   Eigen::MatrixXd T(N, trainSet->outputs());
   int n = 0;
   for(std::vector<int>::const_iterator it = startN; it != endN; ++it, ++n)
