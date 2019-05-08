@@ -25,7 +25,7 @@ namespace OpenANN
 {
 
 Net::Net()
-  : errorFunction(MSE), dropout(false), backpropToAll(false), initialized(false), P(-1), L(0)
+  : errorFunction(MSE), dropout(false), backpropToAll(false), initialized(false), P(-1), L(0), tempInput(1,1), tempOutput(1,1), tempError(1,1), tempGradient(1,1)
 {
   layers.reserve(3);
   infos.reserve(3);
@@ -53,7 +53,7 @@ void Net::clearLayers()
 /**
 * @brief Copy Constructor
 */
-Net::Net(const Net& other) : Learner(other), errorFunction(MSE), dropout(false), backpropToAll(false), initialized(false), P(-1), L(0)
+Net::Net(const Net& other) : Learner(other), errorFunction(MSE), dropout(false), backpropToAll(false), initialized(false), P(-1), L(0), tempInput(1,1), tempOutput(1,1), tempError(1,1), tempGradient(1,1)
 {
     OPENANN_DEBUG << "Copy Constructor\n";
     OPENANN_DEBUG << "Before: Other Architecture:\n" << other.architecture.str() << "\n Own Architecture:\n" << this->architecture.str() << "\n";
@@ -82,7 +82,7 @@ Net::Net(const Net& other) : Learner(other), errorFunction(MSE), dropout(false),
 /**
 * @brief Move Contstructor
 */
-Net::Net(Net&& other)  : Learner(other), errorFunction(MSE), dropout(false), backpropToAll(false), initialized(false), P(-1), L(0)
+Net::Net(Net&& other)  : Learner(other), errorFunction(MSE), dropout(false), backpropToAll(false), initialized(false), P(-1), L(0), tempInput(1,1), tempOutput(1,1), tempError(1,1), tempGradient(1,1)
 {
     OPENANN_DEBUG << "Move Constructor\n";
     OPENANN_DEBUG << "Before: Other Architecture:\n" << other.architecture.str() << "\n Own Architecture:\n" << this->architecture.str() << "\n";
@@ -823,8 +823,8 @@ void Net::errorGradient(std::vector<int>::const_iterator startN,
   }
 
 
-  tempInput.resize(N, trainSet->inputs());
-  Eigen::MatrixXd T(N, trainSet->outputs());
+  tempInput.resize(N, std::max(trainSet->inputs(),1));
+  Eigen::MatrixXd T(N, std::max(trainSet->outputs(),1));
   int n = 0;
   for(std::vector<int>::const_iterator it = startN; it != endN; ++it, ++n)
   {

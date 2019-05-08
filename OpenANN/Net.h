@@ -5,6 +5,7 @@
 #include <OpenANN/ActivationFunctions.h>
 #include <OpenANN/Regularization.h>
 #include <OpenANN/layers/Layer.h>
+#include <OpenANN/io/Logger.h>
 #include <vector>
 
 namespace OpenANN
@@ -380,8 +381,39 @@ net2.load("mlnn.net");
    */
   ///@{
   virtual Eigen::VectorXd operator()(const Eigen::VectorXd& x);
-  virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& X);
+  virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd& x);
+
+  template<typename Derived, typename Derived2>
+  void operator()(const Eigen::DenseBase<Derived>& in, Eigen::DenseBase<Derived2>& out)
+  {
+    if(in.rows() != out.rows())
+    {
+      OPENANN_ERROR << "Number of samples in inputs (" << in.rows() << ") does not match allocated number of rows (" << out.rows() << ") in output. Aborting...\n";
+      return;
+    }
+
+    std::size_t nouts = this->getOutputInfo(this->numberOflayers()-1).outputs();
+    if(out.cols() != nouts)
+    {
+      OPENANN_ERROR << "Allocated output dimensions are " << out.cols() << " but network provides " << nouts <<" outputs. Aborting...\n";
+      return;
+    }
+
+    tempInput = Eigen::MatrixXd(in.rows(), in.cols());
+
+    for(std::size_t r = 0; r < in.rows(); r++)
+      for(std::size_t c = 0; c < in.cols(); c++)
+        tempInput(r,c) = in(r,c);
+
+    forwardPropagate(0);
+
+    for(std::size_t r = 0; r < tempOutput.rows(); r++)
+      for(std::size_t c = 0; c < tempOutput.cols(); c++)
+        out(r,c) = tempOutput(r,c);
+  }
+
   virtual std::vector<std::vector<double>> operator()(const std::vector<std::vector<double>>& x);
+  //virtual double* operator()(const std::vector<std::vector<double>>& x);
   //virtual Eigen::ArrayXd operator()(const Eigen::ArrayXd& X);
   virtual unsigned int dimension();
   virtual unsigned int dimension() const;
