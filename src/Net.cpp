@@ -17,6 +17,7 @@
 #include <OpenANN/io/DirectStorageDataSet.h>
 #include <OpenANN/util/OpenANNException.h>
 #include <OpenANN/util/AssertionMacros.h>
+#include <OpenANN/util/EigenWrapper.h>
 #include <fstream>
 #include <iomanip>
 #include <sstream>
@@ -371,6 +372,39 @@ DataSet* Net::propagateDataSet(DataSet& dataSet, int l)
   return transformedDataSet;
 }
 
+Eigen::MatrixXd Net::propagatePartially(const Eigen::MatrixXd& inputs, int l)
+{
+
+  tempInput = inputs;
+  Eigen::MatrixXd* y = &tempInput;
+  int i = 0;
+  for(std::vector<Layer*>::iterator layer = layers.begin(); layer != layers.end() && i < l; ++layer)
+  {
+    (**layer).forwardPropagate(y, y, dropout);
+    i++;
+  }
+
+  tempOutput = *y;
+  return tempOutput;
+}
+
+std::vector<std::vector<double>> Net::propagatePartially(const std::vector<std::vector<double>>& inputs, int l)
+{
+    tempInput.resize(inputs.size(), Eigen::NoChange);
+    tempInput = OpenANN::util::fromStdVector(inputs);
+
+    Eigen::MatrixXd* y = &tempInput;
+    int i = 0;
+    for(std::vector<Layer*>::iterator layer = layers.begin(); layer != layers.end() && i < l; ++layer)
+    {
+        (**layer).forwardPropagate(y, y, dropout);
+        i++;
+    }
+    tempOutput = *y;
+
+    return OpenANN::util::toStdVector(tempOutput);
+}
+
 void Net::save(const std::string& fileName)  const
 {
   std::ofstream file(fileName.c_str());
@@ -657,25 +691,11 @@ Eigen::MatrixXd Net::operator()(const Eigen::MatrixXd& x)
 std::vector<std::vector<double>> Net::operator()(const std::vector<std::vector<double>>& x)
 {
     tempInput.resize(x.size(), Eigen::NoChange);
-    for(std::size_t r = 0; r < x.size(); r++)
-    {
-        for(std::size_t c = 0; c < x[r].size(); c++)
-        {
-            tempInput(r,c) = x[r][c];
-        }
-    }
+    tempInput = OpenANN::util::fromStdVector(x);
 
     forwardPropagate(0);
-    std::size_t dimOut = tempOutput.cols();
-    std::vector<std::vector<double>> res(x.size());
-    for(std::size_t r = 0; r < res.size(); r++)
-    {
-        res[r].reserve(dimOut);
-        for(std::size_t c = 0; c < (std::size_t)dimOut; c++)
-        {
-            res[r].push_back(tempOutput(r,c));
-        }
-    }
+
+    std::vector<std::vector<double>> res = OpenANN::util::toStdVector(tempOutput);
     return res;
 }
 

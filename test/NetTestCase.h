@@ -16,6 +16,7 @@ class NetTestCase : public TestCase
   void regularizationGradient();
   void saveLoad();
   void copyMove();
+  void predictMinibatchPartial();
 };
 
 #endif // OPENANN_TEST_NET_TEST_CASE_H_

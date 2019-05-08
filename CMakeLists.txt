@@ -102,7 +102,7 @@ set(OPENANN_COMPILER_FLAGS)
 if(CMAKE_COMPILER_IS_GNUCXX)
   set(COMPILER_WARNING_FLAGS "-Wall -Wextra -pedantic -Wno-long-long -Wno-enum-compare")
 endif()
-set(OPENANN_LINK_LIBS "-lopenann") # libraries to link for external executables
+set(OPENANN_LINK_LIBS "-lopenann -lalglib") # libraries to link for external executables
 if(OPENMP_FOUND AND CMAKE_COMPILER_IS_GNUCXX)
   set(OPENANN_LINK_LIBS "${OPENANN_LINK_LIBS} -lgomp")
 endif()

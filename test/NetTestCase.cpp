@@ -19,6 +19,7 @@ void NetTestCase::run()
   RUN(NetTestCase, regularizationGradient);
   RUN(NetTestCase, saveLoad);
   RUN(NetTestCase, copyMove);
+  RUN(NetTestCase, predictMinibatchPartial);
 }
 
 void NetTestCase::dimension()
@@ -197,6 +198,42 @@ void NetTestCase::predictMinibatch()
     for(int f = 0; f < F; f++)
       ASSERT_EQUALS(Y1(n, f), Y2(n, f));
   }
+
+  auto Xv = OpenANN::util::toStdVector(X);
+  auto Y3 = net(Xv);
+  for(int n = 0; n < N; n++)
+  {
+    for(int f = 0; f < F; f++)
+      ASSERT_EQUALS(Y1(n, f), Y3[n][f]);
+  }
+
+}
+
+void NetTestCase::predictMinibatchPartial()
+{
+  const int D = 5;
+  const int F = 2;
+  const int N = 10;
+  Eigen::MatrixXd X = Eigen::MatrixXd::Random(N, D);
+  Eigen::MatrixXd T = Eigen::MatrixXd::Random(N, F);
+
+  OpenANN::Net net;
+  net.inputLayer(D)
+  .fullyConnectedLayer(F, OpenANN::TANH)
+  .outputLayer(F, OpenANN::LINEAR)
+  .trainingSet(X, T);
+
+  Eigen::MatrixXd Y1 = net.propagatePartially(X, 1);
+
+  auto Xv = OpenANN::util::toStdVector(X);
+  auto Y2 = net.propagatePartially(Xv, 1);
+
+  for(int n = 0; n < N; n++)
+  {
+    for(int f = 0; f < F; f++)
+      ASSERT_EQUALS(Y1(n, f), Y2[n][f]);
+  }
+
 }
 
 void NetTestCase::minibatchErrorGradient()

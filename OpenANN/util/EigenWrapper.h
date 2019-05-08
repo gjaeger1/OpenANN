@@ -15,6 +15,7 @@
 #include <Eigen/Core>
 #include <cmath>
 #include <cstdarg>
+#include <vector>
 
 template<typename T, int M, int N>
 bool equals(const Eigen::Matrix<T, M, N>& a, const Eigen::Matrix<T, M, N>& b, T delta)
@@ -65,6 +66,15 @@ bool isMatrixBroken(const Eigen::Matrix<T, M, N> m)
   return isMatrixNan(m) || isMatrixInf(m);
 }
 
+namespace OpenANN
+{
+    namespace util
+    {
+      Eigen::MatrixXd fromStdVector(const std::vector<std::vector<double>>& x);
+
+      std::vector<std::vector<double>> toStdVector(const Eigen::MatrixXd& x);
+    }
+}
 void pack(Eigen::VectorXd& vec, int components, ...);
 
 void unpack(const Eigen::VectorXd& vec, int components, ...);

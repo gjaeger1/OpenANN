@@ -4,6 +4,8 @@ configure_file(OpenANN.cpp.in ${PROJECT_SOURCE_DIR}/OpenANN.cpp)
 add_definitions(${OPENANN_COMPILER_FLAGS})
 file(GLOB_RECURSE openann_src "*.cpp")
 add_library(openann SHARED ${openann_src})
+target_link_libraries(openann alglib)
+
 if(OPENMP_FOUND)
   target_link_libraries(openann gomp)
 endif()

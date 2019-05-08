@@ -297,6 +297,23 @@ public:
    * @return transformed data set (has to be deleted manually)
    */
   DataSet* propagateDataSet(DataSet& dataSet, int l);
+
+  /**
+   * Propagate data set through the first l layers.
+   * @param dataSet original dataset
+   * @param l index of the layer
+   * @return transformed data set (has to be deleted manually)
+   */
+  Eigen::MatrixXd propagatePartially(const Eigen::MatrixXd& inputs, int l);
+
+  /**
+   * Propagate data set through the first l layers.
+   * @param dataSet original dataset
+   * @param l index of the layer
+   * @return transformed data set (has to be deleted manually)
+   */
+  std::vector<std::vector<double>> propagatePartially(const std::vector<std::vector<double>>& inputs, int l);
+
   ///@}
 
   /**
