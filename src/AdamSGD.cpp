@@ -46,7 +46,7 @@ void AdamSGD::optimize()
 {
   OPENANN_CHECK(opt);
   StoppingInterrupt interrupt;
-  while(step() && !interrupt.isSignaled())
+  while(step())
   {
     std::stringstream ss;
 
@@ -84,6 +84,18 @@ bool AdamSGD::step()
     accumulatedError += error;
     OPENANN_CHECK_MATRIX_BROKEN(gradient);
 
+    if(gradient.hasNaN())
+    {
+        OPENANN_ERROR << "NaNs in gradient detected!\n";
+        return false;
+    }
+
+    if(gradient.array().isInf().any())
+    {
+        OPENANN_ERROR << "Infs in gradient detected!\n";
+        return false;
+    }
+
     // update velocities and momentum
     mt = mt.cwiseProduct(mt*beta1) + gradient*(1.0-beta1);
     vt = vt.cwiseProduct(vt*beta2) + gradient.cwiseProduct(gradient)*(1.0-beta2);
@@ -92,6 +104,8 @@ bool AdamSGD::step()
     Eigen::VectorXd mt_cor = mt * (1.0/(1.0 - std::pow(beta1, std::max(1,iteration+b))));
     Eigen::VectorXd vt_cor = vt * (1.0/(1.0 - std::pow(beta2, std::max(1,iteration+b))));
     vt_cor = vt_cor.cwiseSqrt().array() + epsilonAdam;
+    vt_cor = vt_cor.unaryExpr([](double v) { return std::isfinite(v)? v : 0.01; });
+    mt_cor = mt_cor.unaryExpr([](double v) { return std::isfinite(v)? v : 0.0; });
     Eigen::VectorXd updates = learningRate*vt_cor.cwiseInverse().cwiseProduct(mt_cor);
     OPENANN_CHECK_MATRIX_BROKEN(updates);
 
@@ -99,6 +113,19 @@ bool AdamSGD::step()
     parameters -= updates;
 
     OPENANN_CHECK_MATRIX_BROKEN(parameters);
+
+    if(parameters.hasNaN())
+    {
+        OPENANN_ERROR << "New parameters have NaNs!\n";
+        return false;
+    }
+
+    if(parameters.array().isInf().any())
+    {
+        OPENANN_ERROR << "New parameters have Infs!\n";
+        return false;
+    }
+
     opt->setParameters(parameters);
 
     startN += batchSize;

@@ -416,6 +416,7 @@ void Net::save(const std::string& fileName)  const
 
 void Net::save(std::ostream& stream)  const
 {
+  stream.precision(20);
   stream << architecture.str() << "parameters " << currentParameters();
 }
 
