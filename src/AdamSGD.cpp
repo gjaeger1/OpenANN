@@ -112,6 +112,11 @@ bool AdamSGD::step()
     // update velocities and momentum
     mt = mt.cwiseProduct(mt*beta1) + gradient*(1.0-beta1);
     vt = vt.cwiseProduct(vt*beta2) + gradient.cwiseProduct(gradient)*(1.0-beta2);
+    constexpr double maxabs = 1000.0;
+    vt = vt.unaryExpr([&maxabs](double v) { return v <= maxabs ? v : maxabs; });
+    mt = mt.unaryExpr([&maxabs](double v) { return v <= maxabs ? v : maxabs; });
+    vt = vt.unaryExpr([&maxabs](double v) { return v >= -maxabs ? v : -maxabs; });
+    mt = mt.unaryExpr([&maxabs](double v) { return v >= -maxabs ? v : -maxabs; });
 
     // correct bias in velocities and momentum
     Eigen::VectorXd mt_cor = mt * (1.0/(1.0 - std::pow(beta1, std::max(1,iteration+b))));
