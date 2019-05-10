@@ -1,5 +1,6 @@
 #include <OpenANN/layers/RBF.h>
 #include <OpenANN/util/Random.h>
+#include <OpenANN/io/Logger.h>
 #include <iostream>
 #include <limits>
 
