@@ -889,6 +889,7 @@ void Net::forwardPropagate(double* error)
   for(std::vector<Layer*>::iterator layer = layers.begin();layer != layers.end(); ++layer)
   {
     (**layer).forwardPropagate(y, y, dropout, error);
+    OPENANN_CHECK_MATRIX_BROKEN(*y);
     cntLayer++;
   }
 
@@ -912,6 +913,11 @@ void Net::backpropagate()
         backpropToPrevious = l > 2;
 
     (**layer).backpropagate(e, e, backpropToPrevious);
+
+    if(e->hasNaN())
+        OPENANN_ERROR << "Error-Signal has NaNs in layer " << l << " of " << L << "\n";
+
+    OPENANN_CHECK_MATRIX_BROKEN(*e);
 
   }
 

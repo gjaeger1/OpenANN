@@ -46,7 +46,9 @@ void AdamSGD::optimize()
 {
   OPENANN_CHECK(opt);
   StoppingInterrupt interrupt;
-  while(step())
+  double bestError = std::numeric_limits<double>::max()/2.0;
+  Eigen::VectorXd bestParameters = opt->currentParameters();
+  while(step() && 2.0*bestError > accumulatedError)
   {
     std::stringstream ss;
 
@@ -54,8 +56,17 @@ void AdamSGD::optimize()
     ss << ", error = " << FloatingPointFormatter(accumulatedError /
                                                  (double) batches, 4);
 
+    if(accumulatedError < bestError)
+    {
+        bestError = accumulatedError;
+        bestParameters = parameters;
+    }
+
     OPENANN_DEBUG << ss.str();
   }
+
+  parameters = bestParameters;
+  this->result();
 }
 
 bool AdamSGD::step()
@@ -104,9 +115,10 @@ bool AdamSGD::step()
     Eigen::VectorXd mt_cor = mt * (1.0/(1.0 - std::pow(beta1, std::max(1,iteration+b))));
     Eigen::VectorXd vt_cor = vt * (1.0/(1.0 - std::pow(beta2, std::max(1,iteration+b))));
     vt_cor = vt_cor.cwiseSqrt().array() + epsilonAdam;
-    vt_cor = vt_cor.unaryExpr([](double v) { return std::isfinite(v)? v : 0.01; });
+    vt_cor = vt_cor.unaryExpr([](double v) { return std::isfinite(v)? v : 1.0; });
     mt_cor = mt_cor.unaryExpr([](double v) { return std::isfinite(v)? v : 0.0; });
     Eigen::VectorXd updates = learningRate*vt_cor.cwiseInverse().cwiseProduct(mt_cor);
+
     OPENANN_CHECK_MATRIX_BROKEN(updates);
 
     // update parameters
@@ -143,7 +155,7 @@ bool AdamSGD::step()
                     iteration < stop.maximalIterations) &&
                    (stop.minimalSearchSpaceStep == // Gradient too small?
                     StoppingCriteria::defaultValue.minimalSearchSpaceStep ||
-                    mt.norm() >= stop.minimalSearchSpaceStep);
+                    gradient.norm() >= stop.minimalSearchSpaceStep);
   if(!run)
     iteration = -1;
   return run;
