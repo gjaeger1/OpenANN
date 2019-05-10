@@ -228,6 +228,7 @@ void RBF::backpropDeltaFirstPart(const Eigen::MatrixXd& in, const Eigen::MatrixX
 
             if(grad == -1.0/0.0) grad = -std::numeric_limits<double>::max();
             if(grad == 1.0/0.0) grad = std::numeric_limits<double>::max();
+            if(std::isnan(grad)) grad = std::numeric_limits<double>::max();
 
             ndeltas(n,j) += deltas(n,k) * grad;
             if(!std::isfinite(ndeltas(n,j)))
