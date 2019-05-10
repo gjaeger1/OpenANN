@@ -48,6 +48,8 @@ void AdamSGD::optimize()
   StoppingInterrupt interrupt;
   double bestError = std::numeric_limits<double>::max()/2.0;
   Eigen::VectorXd bestParameters = opt->currentParameters();
+  accumulatedError = 0.0;
+  iteration = -1;
   while(step() && 2.0*bestError > accumulatedError)
   {
     std::stringstream ss;
