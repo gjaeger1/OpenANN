@@ -7,7 +7,6 @@ find_package(OpenMP)
 find_package(BLAS)
 find_package(LAPACK)
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(FOUNDATION REQUIRED foundation)
 
 include(CheckIncludeFiles)
 include(cmake/UseDoxygen.cmake)

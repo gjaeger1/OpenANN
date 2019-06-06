@@ -3,9 +3,6 @@
 #include <OpenANN/util/AssertionMacros.h>
 #include <OpenANN/Evaluator.h>
 
-
-#include <foundation/CSVReader.h>
-
 namespace OpenANN
 {
 
@@ -43,8 +40,7 @@ void DirectStorageDataSet::finishIteration(Learner& learner)
 
 void DirectStorageDataSet::saveCSV(const std::string& path) const
 {
-    foundation::CSV::CSVWriter writer(path);
-    writer.writeArray(*(this->in));
+
 };
 
 }
